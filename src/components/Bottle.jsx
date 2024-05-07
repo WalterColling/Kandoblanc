@@ -9,9 +9,17 @@ import { useFrame } from "@react-three/fiber";
 import { eventHandler } from "./EventHandlers";
 import { BaseBottle } from "./Materials/M-BaseBottle";
 import { BaseTransmission } from "./Materials/M-BaseTransluscent";
+import { useControls } from "leva";
 
 export function Bottle(props) {
   const { nodes, materials } = useGLTF("/Kandoblanc.gltf");
+
+  const { rotationEnabled } = useControls({
+    rotationEnabled: {
+      value: true,
+      label: "Enable Rotation",
+    },
+  });
 
   const liquid1 = useRef();
   const bottle1 = useRef();
@@ -28,9 +36,8 @@ export function Bottle(props) {
   }, [materials]); // This ensures the effect runs when materials are loaded
 
   useFrame(() => {
-    // Rotate the entire group by modifying its rotation.y property
-    if (obj.current) {
-      obj.current.rotation.y += 0.005; // Adjust rotation speed as needed
+    if (rotationEnabled && obj.current) {
+      obj.current.rotation.y += 0.005;
     }
   });
 
@@ -40,34 +47,31 @@ export function Bottle(props) {
         ref={liquid1}
         name="Liquid1"
         castShadow
-        receiveShadow
         geometry={nodes.Liquid1.geometry}
         material={materials.Mat}
         position={[0, 0.053, 0]}
       >
         <BaseBottle />
       </mesh>
-      <TransformControls object={liquid1} />
+      {/* <TransformControls object={liquid1} /> */}
 
       <mesh
         ref={bottle1}
         name="Bottle1"
         castShadow
-        receiveShadow
         geometry={nodes.Bottle1.geometry}
         material={materials.Mat}
         position={[0, 0.053, 0]}
       >
         <BaseTransmission />
       </mesh>
-      <TransformControls object={bottle1} />
+      {/* <TransformControls object={bottle1} /> */}
 
       <mesh
         ref={top}
         onClick={eventHandler}
         name="Top"
         castShadow
-        receiveShadow
         geometry={nodes.Top.geometry}
         material={materials.Mat}
         position={[0, 0.245, 0]}
@@ -75,20 +79,19 @@ export function Bottle(props) {
       >
         <BaseBottle />
       </mesh>
-      <TransformControls object={top} />
+      {/* <TransformControls object={top} /> */}
 
       <mesh
         ref={neck}
         name="Neck"
         castShadow
-        receiveShadow
         geometry={nodes.Neck.geometry}
         material={materials.Mat}
         position={[0, 0.181, 0]}
       >
         <BaseBottle />
       </mesh>
-      <TransformControls object={neck} />
+      {/* <TransformControls object={neck} /> */}
     </group>
   );
 }

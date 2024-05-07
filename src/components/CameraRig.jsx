@@ -2,7 +2,7 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { easing } from "maath";
 
 function CameraRig() {
-  const { camera } = useThree(); // Now correctly uses useThree to access the camera
+  const { camera } = useThree();
 
   useFrame((state, delta) => {
     // Adjust the camera based on mouse movement with smoothing
@@ -18,6 +18,7 @@ function CameraRig() {
 
 export default CameraRig;
 
+//alternative camera control
 // function Intro() {
 //   const [vec] = useState(() => new THREE.Vector3())
 //   return useFrame((state) => {

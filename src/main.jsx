@@ -9,14 +9,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <>
     <Canvas
       shadows
-      dpr={[1, 1.5]}
-      camera={{ position: [0, 0, 1], fov: 40, near: 0.1, far: 20 }}
+      dpr={[2, 4]}
+      camera={{ position: [1, 0, 1], fov: 40, near: 0.1, far: 20 }}
     >
-      <fog attach="fog" args={["#ffffff", 0, 15]} />
       <Suspense>
         <Intro />
       </Suspense>
 
+      {/* <OrbitControls /> */}
       <CameraRig />
     </Canvas>
   </>
