@@ -9,7 +9,7 @@ export function BaseTransmission() {
       map={texture}
       backside
       samples={16}
-      backsideThickness={0.3}
+      backsideThickness={0.01}
       resolution={1024}
       thickness={0.07}
       roughness={0.5}
@@ -18,6 +18,7 @@ export function BaseTransmission() {
       // clearcoat={0.5}
       // clearcoatRoughness={0.5}
       envMapIntensity={0}
+      color={"#ebaf84"}
     />
   );
 }

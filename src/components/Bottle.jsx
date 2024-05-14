@@ -1,11 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import {
-  MeshTransmissionMaterial,
-  TransformControls,
-  useGLTF,
-} from "@react-three/drei";
+import { useGLTF } from "@react-three/drei";
 import { Color } from "three";
-import { useFrame } from "@react-three/fiber";
+
 import { eventHandler } from "./EventHandlers";
 import { BaseBottle } from "./Materials/M-BaseBottle";
 import { BaseTransmission } from "./Materials/M-BaseTransluscent";
@@ -14,12 +10,13 @@ import { useControls } from "leva";
 export function Bottle(props) {
   const { nodes, materials } = useGLTF("/Kandoblanc.gltf");
 
-  const { rotationEnabled } = useControls({
-    rotationEnabled: {
-      value: true,
-      label: "Enable Rotation",
-    },
-  });
+  // // Enable rotation of the bottle
+  // const { rotationEnabled } = useControls({
+  //   rotationEnabled: {
+  //     value: true,
+  //     label: "Enable Rotation",
+  //   },
+  // });
 
   const liquid1 = useRef();
   const bottle1 = useRef();
@@ -28,33 +25,21 @@ export function Bottle(props) {
   const obj = useRef();
 
   useEffect(() => {
-    // Set the color of the Bottle material to green
     if (materials.Mat) {
-      materials.Mat.color.set(new Color(0x00ff00)); // Green
+      materials.Mat.color.set(new Color(0x00ff00));
       materials.Mat.needsUpdate = true; // Inform Three.js to update the material
     }
   }, [materials]); // This ensures the effect runs when materials are loaded
 
-  useFrame(() => {
-    if (rotationEnabled && obj.current) {
-      obj.current.rotation.y += 0.005;
-    }
-  });
+  // // Rotate the bottle
+  // useFrame(() => {
+  //   if (rotationEnabled && obj.current) {
+  //     obj.current.rotation.y += 0.005;
+  //   }
+  // });
 
   return (
     <group ref={obj} {...props} dispose={null}>
-      <mesh
-        ref={liquid1}
-        name="Liquid1"
-        castShadow
-        geometry={nodes.Liquid1.geometry}
-        material={materials.Mat}
-        position={[0, 0.053, 0]}
-      >
-        <BaseBottle />
-      </mesh>
-      {/* <TransformControls object={liquid1} /> */}
-
       <mesh
         ref={bottle1}
         name="Bottle1"
@@ -67,6 +52,18 @@ export function Bottle(props) {
       </mesh>
       {/* <TransformControls object={bottle1} /> */}
 
+      <mesh
+        ref={liquid1}
+        name="Liquid1"
+        castShadow
+        geometry={nodes.Liquid1.geometry}
+        material={materials.Mat}
+        position={[0, 0.053, 0]}
+      >
+        <BaseBottle />
+      </mesh>
+
+      {/* <TransformControls object={liquid1} /> */}
       <mesh
         ref={top}
         onClick={eventHandler}

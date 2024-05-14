@@ -4,19 +4,21 @@ import "./index.css";
 import { Canvas } from "@react-three/fiber";
 import Intro from "./Intro";
 import CameraRig from "./components/CameraRig";
+import { OrbitControls } from "@react-three/drei";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
     <Canvas
       shadows
       dpr={[2, 4]}
-      camera={{ position: [1, 0, 1], fov: 40, near: 0.1, far: 20 }}
+      camera={{ position: [1, 8, 1], fov: 30, near: 0.1, far: 35 }}
     >
       <Suspense>
         <Intro />
       </Suspense>
 
       {/* <OrbitControls /> */}
+
       <CameraRig />
     </Canvas>
   </>

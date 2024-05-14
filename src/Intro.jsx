@@ -7,16 +7,19 @@ import SceneEnv from "./components/Environment";
 import { useControls } from "leva";
 
 function intro() {
-  const { color, isDraggable } = useControls({
-    color: true,
-    isDraggable: true,
-  });
   let colorbg = "#18181E";
-  if (color === false) {
-    colorbg = "#FAFAF6";
-  } else {
-    colorbg = "#18181E";
-  }
+  let isDraggable = true;
+
+  // // color and isDraggable are the controls for the Leva GUI
+  // const { color, isDraggable } = useControls({
+  //   color: true,
+  //   isDraggable: true,
+  // });
+  // if (color === false) {
+  //   colorbg = "#FAFAF6";
+  // } else {
+  //   colorbg = "#18181E";
+  // }
 
   return (
     <>
