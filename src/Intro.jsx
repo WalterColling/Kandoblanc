@@ -6,7 +6,8 @@ import Floor from "./components/Floor";
 import SceneEnv from "./components/Environment";
 import { useControls } from "leva";
 import { BottleScroll } from "./components/BottleScroll";
-import { ScrollControls } from "@react-three/drei";
+import { OrbitControls, ScrollControls } from "@react-three/drei";
+import CameraRigScroll from "./components/CameraRigScroll";
 
 function intro() {
   let colorbg = "#18181E";
@@ -25,14 +26,15 @@ function intro() {
 
   return (
     <>
-      <Perf position="top-left" /> // Performance monitor
+      <Perf position="top-left" />
       <SceneEnv color={colorbg} />
-      <DraggableElement draggable={isDraggable}>
+      {/* <DraggableElement draggable={isDraggable}>
         <Bottle />
-      </DraggableElement>
-      {/* <ScrollControls pages={3}>
+      </DraggableElement> */}
+      <ScrollControls pages={3}>
+        <CameraRigScroll />
         <BottleScroll />
-      </ScrollControls> */}
+      </ScrollControls>
     </>
   );
 }

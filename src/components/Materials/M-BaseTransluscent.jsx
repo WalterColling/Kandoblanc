@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { MeshTransmissionMaterial, useTexture } from "@react-three/drei";
 
-export function BaseTransmission() {
-  const texture = useTexture("./Kandoblanc_V03_Mat_BaseColor.png");
+export function BaseTransmission({ isColorMode }) {
+  const texture = useTexture("./Kandoblanc_V03_Mat_BaseColor.webp");
 
   texture.flipY = false;
+
+  const clearcoatColor = isColorMode ? "#8a2f05" : "#808080";
+  const color = isColorMode ? "#f8eeb5" : "#808080";
 
   return (
     <MeshTransmissionMaterial
@@ -19,9 +22,9 @@ export function BaseTransmission() {
       chromaticAberration={0}
       clearcoat={0.5}
       clearcoatRoughness={0.5}
-      clearcoatColor={"#8a2f05"}
+      clearcoatColor={clearcoatColor}
       envMapIntensity={0}
-      color={"#f8eeb5"}
+      color={color}
     />
   );
 }
