@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <Canvas
       shadows
       dpr={[2, 4]}
-      camera={{ position: [1, 8, 1], fov: 30, near: 0.1, far: 35 }}
+      camera={{ position: [0.5, 0.2, 5], fov: 30, near: 0.1, far: 35 }}
     >
       <Suspense>
         <Intro />

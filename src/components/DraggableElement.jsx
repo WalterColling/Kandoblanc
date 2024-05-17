@@ -13,6 +13,7 @@ function DraggableElement({ children, draggable = true }) {
   const bind = useDrag(
     ({ movement: [mx], velocity, down }) => {
       if (!draggable) return;
+
       const speed = down ? velocity : 0;
       let newRot =
         targetRotation + (mx / gl.domElement.clientWidth) * 2 * Math.PI;
@@ -50,3 +51,5 @@ function DraggableElement({ children, draggable = true }) {
 }
 
 export default DraggableElement;
+
+//last changed
