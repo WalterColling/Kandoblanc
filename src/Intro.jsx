@@ -8,6 +8,7 @@ import { useControls } from "leva";
 import { BottleScroll } from "./components/BottleScroll";
 import { OrbitControls, ScrollControls } from "@react-three/drei";
 import CameraRigScroll from "./components/CameraRigScroll";
+import CameraRig from "./components/CameraRig";
 
 function intro() {
   let colorbg = "#18181E";
@@ -28,13 +29,15 @@ function intro() {
     <>
       <Perf position="top-left" />
       <SceneEnv color={colorbg} />
-      {/* <DraggableElement draggable={isDraggable}>
+
+      <DraggableElement draggable={isDraggable}>
+        <CameraRig />
         <Bottle />
-      </DraggableElement> */}
-      <ScrollControls pages={3}>
+      </DraggableElement>
+      {/* <ScrollControls pages={3} damping={0.3}>
         <CameraRigScroll />
         <BottleScroll />
-      </ScrollControls>
+      </ScrollControls> */}
     </>
   );
 }

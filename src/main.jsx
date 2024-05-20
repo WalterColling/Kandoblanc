@@ -7,6 +7,7 @@ import CameraRig from "./components/CameraRig";
 import { OrbitControls } from "@react-three/drei";
 import CameraRigScroll from "./components/CameraRigScroll";
 import { CameraWithHelperComponent } from "./components/CameraWork";
+import { DepthOfField, EffectComposer } from "@react-three/postprocessing";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <>
@@ -18,6 +19,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <Suspense fallback={null}>
         <Intro />
       </Suspense>
+      {/* <EffectComposer>
+        {" "}
+        <DepthOfField
+          focusDistance={0.5} // where to focus
+          focalLength={0.02} // focal length
+          bokehScale={2} // bokeh size
+        />
+      </EffectComposer> */}
 
       {/* <OrbitControls /> */}
 
