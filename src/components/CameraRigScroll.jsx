@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Vector3, MathUtils } from "three";
-import { useScroll, ScrollControls } from "@react-three/drei";
+import { useScroll } from "@react-three/drei";
 
 function CameraRigScroll() {
   const { camera } = useThree();
@@ -10,11 +10,14 @@ function CameraRigScroll() {
   const positions = [
     { position: [0, 0.2, 0.5], fov: 35, lookAt: [0, 0.35, 0] },
     { position: [0, 0.2, 0.5], fov: 35, lookAt: [0, 0.24, 0] },
-    { position: [0, 0.3, 0.9], fov: 35, lookAt: [0, 0.11, 0] },
-    { position: [0, 0.1, 0.5], fov: 35, lookAt: [0, 0.11, 0] },
-    { position: [0, 0.1, 0.5], fov: 35, lookAt: [0, 0.32, 0] },
-    { position: [0, 0.2, 0.5], fov: 35, lookAt: [0, 0.32, 0] },
-    { position: [0, 0.2, 0.5], fov: 35, lookAt: [0, 0.57, 0] },
+    { position: [0, 0.25, 0.6], fov: 35, lookAt: [0, 0.08, 0] },
+    { position: [0, 0.25, 0.5], fov: 35, lookAt: [0, 0.08, 0] },
+    { position: [0, 0.28, 0.5], fov: 35, lookAt: [0, 0.08, 0] },
+    { position: [0, 0.3, 0.5], fov: 35, lookAt: [0, 0.3, 0] },
+    { position: [0, 0.37, 0.5], fov: 35, lookAt: [0, 0.3, 0] },
+    { position: [0, 0.45, 0.5], fov: 35, lookAt: [0, 0.45, 0] },
+    { position: [0, 0.6, 0.5], fov: 35, lookAt: [0, 0.45, 0] },
+    { position: [0, 0.2, 0.6], fov: 35, lookAt: [0, 0.1, 0] },
   ];
 
   // Initialize target values for damping
@@ -22,7 +25,7 @@ function CameraRigScroll() {
   const targetLookAt = useRef(new Vector3());
   const targetFov = useRef(camera.fov);
 
-  useFrame((state, delta) => {
+  useFrame(() => {
     const offset = scroll.offset * (positions.length - 1);
     const currentIndex = Math.floor(offset);
     const nextIndex = Math.min(currentIndex + 1, positions.length - 1);
@@ -46,17 +49,10 @@ function CameraRigScroll() {
 
     targetFov.current = MathUtils.lerp(currentPos.fov, nextPos.fov, progress);
 
-    // Apply damping to the camera's position, fov, and lookAt
-    camera.position.lerp(
-      targetPosition.current,
-      MathUtils.damp(0, 1, 8, delta)
-    );
-    camera.fov = MathUtils.damp(camera.fov, targetFov.current, 8, delta);
-    camera.lookAt(
-      camera.position
-        .clone()
-        .lerp(targetLookAt.current, MathUtils.damp(0, 1, 8, delta))
-    );
+    // Apply the calculated values directly to the camera's position, fov, and lookAt
+    camera.position.copy(targetPosition.current);
+    camera.fov = targetFov.current;
+    camera.lookAt(targetLookAt.current);
 
     camera.updateProjectionMatrix();
   });

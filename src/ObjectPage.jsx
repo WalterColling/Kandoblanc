@@ -2,6 +2,7 @@ import SceneEnv from "./components/Environment";
 import { BottleScroll } from "./components/BottleScroll";
 import { ScrollControls } from "@react-three/drei";
 import CameraRigScroll from "./components/CameraRigScroll";
+import { CameraWork } from "./components/CameraWork";
 
 function ObjectPage() {
   let colorbg = "#18181E";
@@ -11,9 +12,9 @@ function ObjectPage() {
       {/* <Perf position="top-left" /> */}
       <SceneEnv color={colorbg} />
 
-      <ScrollControls pages={3} damping={0.3}>
-        <CameraRigScroll />
+      <ScrollControls pages={7} damping={0.3}>
         <BottleScroll />
+        <CameraRigScroll />
       </ScrollControls>
     </>
   );

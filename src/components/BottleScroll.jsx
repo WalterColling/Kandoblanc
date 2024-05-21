@@ -1,15 +1,10 @@
-import React, { useEffect, useLayoutEffect, useRef } from "react";
-import { TransformControls, useGLTF, useScroll } from "@react-three/drei";
-import { Color } from "three";
-
-import { eventHandler } from "./EventHandlers";
+import React, { useEffect, useRef } from "react";
+import { useGLTF, useScroll } from "@react-three/drei";
+import { Color, Vector3 } from "three";
+import { useFrame } from "@react-three/fiber";
+import { Liquid } from "./Materials/M-Liquid";
 import { BaseBottle } from "./Materials/M-BaseBottle";
 import { BaseTransmission } from "./Materials/M-BaseTransluscent";
-import { useControls } from "leva";
-import DraggableElement from "./DraggableElement";
-import { useFrame } from "@react-three/fiber";
-import gsap from "gsap";
-import { Liquid } from "./Materials/M-Liquid";
 
 export function BottleScroll(props) {
   const { nodes, materials } = useGLTF("/Kandoblanc.gltf");
@@ -18,8 +13,26 @@ export function BottleScroll(props) {
   const top = useRef();
   const neck = useRef();
   const obj = useRef();
-  const timeline = useRef();
   const scroll = useScroll();
+
+  // Define positions and rotations for each step
+  const positions = [
+    { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
+    { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
+    { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
+    { bottle: [0, 0.0, 0], top: [0, 0.2, 0], neck: [0, 0.15, 0] },
+    { bottle: [0, 0.0, 0], top: [0, 0.2, 0], neck: [0, 0.15, 0] },
+    { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+    { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+    { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+    { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+    { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
+  ];
+
+  // Initialize target values
+  const targetBottlePosition = useRef(new Vector3());
+  const targetTopPosition = useRef(new Vector3());
+  const targetNeckPosition = useRef(new Vector3());
 
   useEffect(() => {
     if (materials.Mat) {
@@ -29,14 +42,38 @@ export function BottleScroll(props) {
   }, [materials]); // This ensures the effect runs when materials are loaded
 
   useFrame(() => {
-    const targetY = scroll.offset * 2;
-    gsap.to(bottle.current.position, { duration: 1, y: targetY });
-  });
+    const offset = scroll.offset * (positions.length - 1);
+    const currentIndex = Math.floor(offset);
+    const nextIndex = Math.min(currentIndex + 1, positions.length - 1);
+    const progress = offset - currentIndex;
 
-  useLayoutEffect(() => {
-    timeline.current = gsap.timeline();
-    timeline.current.to(bottle.current.position, { duration: 1 });
-  }, []);
+    const currentPos = positions[currentIndex];
+    const nextPos = positions[nextIndex];
+
+    // Calculate target values
+    targetBottlePosition.current.lerpVectors(
+      new Vector3(...currentPos.bottle),
+      new Vector3(...nextPos.bottle),
+      progress
+    );
+
+    targetTopPosition.current.lerpVectors(
+      new Vector3(...currentPos.top),
+      new Vector3(...nextPos.top),
+      progress
+    );
+
+    targetNeckPosition.current.lerpVectors(
+      new Vector3(...currentPos.neck),
+      new Vector3(...nextPos.neck),
+      progress
+    );
+
+    // Apply the calculated values directly to the positions
+    bottle.current.position.copy(targetBottlePosition.current);
+    top.current.position.copy(targetTopPosition.current);
+    neck.current.position.copy(targetNeckPosition.current);
+  });
 
   return (
     <group ref={obj} {...props} dispose={null}>
@@ -60,11 +97,9 @@ export function BottleScroll(props) {
           <Liquid />
         </mesh>
       </group>
-      {/* <TransformControls object={bottle} /> */}
 
       <group ref={top}>
         <mesh
-          onClick={eventHandler}
           name="Top"
           castShadow
           geometry={nodes.Top.geometry}
@@ -75,7 +110,6 @@ export function BottleScroll(props) {
           <BaseBottle />
         </mesh>
       </group>
-      {/* <TransformControls object={top} /> */}
 
       <group ref={neck}>
         <mesh
@@ -88,11 +122,8 @@ export function BottleScroll(props) {
           <BaseBottle />
         </mesh>
       </group>
-      {/* <TransformControls object={neck} /> */}
     </group>
   );
 }
 
 useGLTF.preload("/Kandoblanc.gltf");
-
-//last changed
