@@ -1,16 +1,9 @@
 import React, { useRef } from "react";
-
-import { Color } from "three";
 import Floor from "./Floor";
 import { Environment, useHelper } from "@react-three/drei";
-import { useControls } from "leva";
-import * as THREE from "three";
 
 function SceneEnv({ color }) {
   const groupRef = useRef();
-
-  // const directionalLight = useRef();
-  // useHelper(directionalLight, THREE.DirectionalLightHelper, 1);
 
   return (
     <>
@@ -25,8 +18,6 @@ function SceneEnv({ color }) {
         />
       </group>
       <ambientLight intensity={2} />
-
-      {/* <directionalLight ref={directionalLight} intensity={0.5} /> */}
 
       <Floor color={color} />
     </>

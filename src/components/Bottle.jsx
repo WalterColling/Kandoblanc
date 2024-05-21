@@ -1,17 +1,17 @@
-import React, { useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { TransformControls, useGLTF } from "@react-three/drei";
 import { Color } from "three";
 import { gsap } from "gsap";
-
 import { eventHandler } from "./EventHandlers";
-import { BaseBottle } from "./Materials/M-BaseBottle";
 import { BaseTransmission } from "./Materials/M-BaseTransluscent";
 import { useControls } from "leva";
 import { Liquid } from "./Materials/M-Liquid";
 import { BaseBottleEx } from "./Materials/M-BaseBottleExtended";
+import LoadingContext from "./LoadingContext";
 
 export function Bottle(props) {
   const { nodes, materials } = useGLTF("/Kandoblanc.gltf");
+  const { setObjectLoaded } = useContext(LoadingContext);
 
   const bottle = useRef();
   const top = useRef();
@@ -22,6 +22,7 @@ export function Bottle(props) {
     if (materials.Mat) {
       materials.Mat.color.set(new Color(0x00ff00));
       materials.Mat.needsUpdate = true; // Inform Three.js to update the material
+      setObjectLoaded(true); // Set context to true when materials are loaded (animatiopn play after it)
     }
   }, [materials]); // ensures the effect runs when materials are loaded
 
@@ -34,7 +35,7 @@ export function Bottle(props) {
 
   // Animate the bottle
   useEffect(() => {
-    if (top.current) {
+    if (setObjectLoaded && top.current) {
       gsap.from([top.current.position], {
         duration: 2.5,
         y: 0.6,
@@ -42,10 +43,10 @@ export function Bottle(props) {
         delay: 0.2,
       });
     }
-  }, []);
+  }, [setObjectLoaded]);
 
   useEffect(() => {
-    if (neck.current) {
+    if (setObjectLoaded && neck.current) {
       gsap.from([neck.current.position], {
         duration: 2.2,
         y: 0.3,
@@ -53,7 +54,7 @@ export function Bottle(props) {
         delay: 0.2,
       });
     }
-  }, []);
+  }, [setObjectLoaded]);
 
   return (
     <group ref={obj} {...props} dispose={null}>
