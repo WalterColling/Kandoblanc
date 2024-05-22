@@ -16,7 +16,7 @@ function CameraRigScroll() {
     { position: [0, 0.3, 0.5], fov: 35, lookAt: [0, 0.3, 0] },
     { position: [0, 0.37, 0.5], fov: 35, lookAt: [0, 0.3, 0] },
     { position: [0, 0.45, 0.5], fov: 35, lookAt: [0, 0.45, 0] },
-    { position: [0, 0.6, 0.5], fov: 35, lookAt: [0, 0.45, 0] },
+    { position: [0, 0.5, 0.5], fov: 35, lookAt: [0, 0.45, 0] },
     { position: [0, 0.2, 0.6], fov: 35, lookAt: [0, 0.1, 0] },
   ];
 
