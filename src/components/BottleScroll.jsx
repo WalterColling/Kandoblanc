@@ -5,6 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import { Liquid } from "./Materials/M-Liquid";
 import { BaseBottle } from "./Materials/M-BaseBottle";
 import { BaseTransmission } from "./Materials/M-BaseTransluscent";
+import { BaseBottleEx } from "./Materials/M-BaseBottleExtended";
 
 export function BottleScroll(props) {
   const { nodes, materials } = useGLTF("/Kandoblanc.gltf");
@@ -19,6 +20,9 @@ export function BottleScroll(props) {
   const [hoveredBottle, setHoveredBottle] = useState(false);
   const [hoveredTop, setHoveredTop] = useState(false);
   const [hoveredNeck, setHoveredNeck] = useState(false);
+
+  // State for last index
+  const [atLastIndex, setAtLastIndex] = useState(false);
 
   // Define positions and rotations for each step
   const positions = [
@@ -66,7 +70,6 @@ export function BottleScroll(props) {
     const currentIndex = Math.floor(offset);
     const nextIndex = Math.min(currentIndex + 1, positions.length - 1);
     const progress = offset - currentIndex;
-
     const currentPos = positions[currentIndex];
     const nextPos = positions[nextIndex];
 
@@ -94,8 +97,14 @@ export function BottleScroll(props) {
     top.current.position.copy(targetTopPosition.current);
     neck.current.position.copy(targetNeckPosition.current);
 
-    // Update rotations for spinning effect when hovered
-    if (hoveredBottle) {
+    // Determine if the last index is reached
+    const atLastIndexNow = scroll.offset >= 1.0;
+    if (atLastIndexNow !== atLastIndex) {
+      setAtLastIndex(atLastIndexNow);
+    }
+
+    // Update rotations for spinning effect when hovered or last index is reached
+    if (hoveredBottle || atLastIndex) {
       bottleRotation.current.y += 0.01; // Adjust speed as needed
     } else {
       bottleRotation.current.y = MathUtils.damp(
@@ -109,7 +118,7 @@ export function BottleScroll(props) {
       );
     }
 
-    if (hoveredTop) {
+    if (hoveredTop || atLastIndex) {
       topRotation.current.y += 0.01; // Adjust speed as needed
     } else {
       topRotation.current.y = MathUtils.damp(
@@ -123,7 +132,7 @@ export function BottleScroll(props) {
       );
     }
 
-    if (hoveredNeck) {
+    if (hoveredNeck || atLastIndex) {
       neckRotation.current.y += 0.01; // Adjust speed as needed
     } else {
       neckRotation.current.y = MathUtils.damp(
@@ -144,8 +153,10 @@ export function BottleScroll(props) {
   });
 
   const getClosestRotation = (current, original) => {
-    const currentRot = current % (Math.PI * 2); // normalize to [0, 2PI]
-    const originalRot = original % (Math.PI * 2); // normalize to [0, 2PI]
+    const currentRot =
+      ((current % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2); // normalize to [0, 2PI]
+    const originalRot =
+      ((original % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2); // normalize to [0, 2PI]
     const deltaRot = currentRot - originalRot;
 
     if (deltaRot > Math.PI) return originalRot + Math.PI * 2;
@@ -173,7 +184,7 @@ export function BottleScroll(props) {
           material={materials.Mat}
           position={[0, 0.053, 0]}
         >
-          <BaseTransmission />
+          <BaseTransmission isColorMode={hoveredBottle || atLastIndex} />
         </mesh>
         <mesh
           name="Liquid1"
@@ -205,7 +216,7 @@ export function BottleScroll(props) {
           position={[0, 0.245, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
         >
-          <BaseBottle />
+          <BaseBottleEx isBaseColor={hoveredTop || atLastIndex} />
         </mesh>
       </group>
 
@@ -227,7 +238,7 @@ export function BottleScroll(props) {
           material={materials.Mat}
           position={[0, 0.181, 0]}
         >
-          <BaseBottle />
+          <BaseBottleEx isBaseColor={hoveredNeck || atLastIndex} />
         </mesh>
       </group>
     </group>
