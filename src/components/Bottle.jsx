@@ -1,16 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { TransformControls, useGLTF } from "@react-three/drei";
-import { Color } from "three";
+import React, { useContext, useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { eventHandler } from "./EventHandlers";
-import { BaseTransmission } from "./Materials/M-BaseTransluscent";
-import { useControls } from "leva";
-import { Liquid } from "./Materials/M-Liquid";
-import { BaseBottleEx } from "./Materials/M-BaseBottleExtended";
 import LoadingContext from "./LoadingContext";
+import { useGLTF } from "@react-three/drei";
+import BottlePart from "./BottlePart";
 
 export function Bottle(props) {
-  const { nodes, materials } = useGLTF("/Kandoblanc.gltf");
+  const { nodes } = useGLTF("/Kandoblanc.gltf"); // Only load nodes (geometry)
   const { setObjectLoaded } = useContext(LoadingContext);
 
   const bottle = useRef();
@@ -19,21 +14,11 @@ export function Bottle(props) {
   const obj = useRef();
 
   useEffect(() => {
-    if (materials.Mat) {
-      materials.Mat.color.set(new Color(0x00ff00));
-      materials.Mat.needsUpdate = true; // Inform Three.js to update the material
-      setObjectLoaded(true); // Set context to true when materials are loaded (animatiopn play after it)
+    if (nodes) {
+      setObjectLoaded(true);
     }
-  }, [materials]); // ensures the effect runs when materials are loaded
+  }, [nodes, setObjectLoaded]);
 
-  // // Rotate the bottle
-  // useFrame(() => {
-  //   if (rotationEnabled && obj.current) {
-  //     obj.current.rotation.y += 0.005;
-  //   }
-  // });
-
-  // Animate the bottle
   useEffect(() => {
     if (setObjectLoaded && top.current) {
       gsap.from([top.current.position], {
@@ -58,51 +43,36 @@ export function Bottle(props) {
 
   return (
     <group ref={obj} {...props} dispose={null}>
-      <group ref={bottle} rotaion>
-        <mesh
+      <group ref={bottle}>
+        <BottlePart
           name="Bottle1"
           geometry={nodes.Bottle1.geometry}
-          material={materials.Mat}
           position={[0, 0.053, 0]}
-        >
-          <BaseTransmission isColorMode={false} />
-        </mesh>
-
-        <mesh
+          type="BaseTransmission"
+        />
+        <BottlePart
           name="Liquid1"
           geometry={nodes.Liquid1.geometry}
-          material={materials.Mat}
           position={[0, 0.053, 0]}
-        >
-          <Liquid />
-        </mesh>
+          type="Liquid"
+        />
       </group>
-      {/* <TransformControls object={bottle} /> */}
-
-      <mesh
+      <BottlePart
         ref={top}
-        onClick={eventHandler}
         name="Top"
         geometry={nodes.Top.geometry}
-        material={materials.Mat}
         position={[0, 0.245, 0]}
         rotation={[-Math.PI / 2, 0, 1.4]}
-      >
-        <BaseBottleEx isBaseColor={false} />
-      </mesh>
-      {/* <TransformControls object={top} /> */}
-
-      <mesh
+        type="BaseBottleEx"
+      />
+      <BottlePart
         ref={neck}
         name="Neck"
         geometry={nodes.Neck.geometry}
-        material={materials.Mat}
         position={[0, 0.181, 0]}
         rotation={[0, 0.1, 0]}
-      >
-        <BaseBottleEx isBaseColor={false} />
-      </mesh>
-      {/* <TransformControls object={neck} /> */}
+        type="BaseBottleEx"
+      />
     </group>
   );
 }

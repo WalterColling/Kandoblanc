@@ -18,7 +18,6 @@ function ObjectPage() {
     <>
       {/* <Perf position="top-left" /> */}
       <SceneEnv color={colorbg} />
-
       <ScrollControls pages={pages} damping={damping}>
         <BottleScroll />
         <CameraRigScroll />

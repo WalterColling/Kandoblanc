@@ -4,6 +4,8 @@ import { useDrag } from "react-use-gesture";
 import { useThree, useFrame } from "@react-three/fiber";
 import { easings } from "@react-spring/web";
 
+// make thing spin on drag
+
 function DraggableElement({ children, draggable = true }) {
   const ref = useRef(null);
   const { gl } = useThree();
@@ -51,5 +53,3 @@ function DraggableElement({ children, draggable = true }) {
 }
 
 export default DraggableElement;
-
-//last changed

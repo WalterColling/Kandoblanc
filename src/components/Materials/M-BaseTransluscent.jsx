@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { MeshTransmissionMaterial, useTexture } from "@react-three/drei";
 
-export function BaseTransmission({ isColorMode }) {
+export function BaseTransmission({ isBaseColor }) {
   const texture = useTexture("./Kandoblanc_V03_Mat_BaseColor.webp");
 
-  texture.flipY = false;
+  useEffect(() => {
+    texture.flipY = false;
+    texture.needsUpdate = true; // Ensure the texture is updated after flipping
+  }, [texture]);
 
-  const clearcoatColor = isColorMode ? "#8a2f05" : "#808080";
-  const color = isColorMode ? "#f8eeb5" : "#808080";
+  const clearcoatColor = isBaseColor ? "#8a2f05" : "#808080";
+  const color = isBaseColor ? "#f8eeb5" : "#808080";
 
   return (
     <MeshTransmissionMaterial

@@ -1,8 +1,9 @@
+import React from "react";
 import { Plane, MeshReflectorMaterial } from "@react-three/drei";
 
 export default function Floor({ color }) {
   return (
-    <Plane args={[20, 20]} rotation={[-Math.PI / 2, 0, Math.PI / 2]}>
+    <Plane args={[20, 20]} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
       <MeshReflectorMaterial
         attach="material"
         color={color}

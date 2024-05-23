@@ -1,30 +1,27 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useGLTF, useScroll } from "@react-three/drei";
-import { Color, Vector3, Euler, MathUtils } from "three";
 import { useFrame } from "@react-three/fiber";
-import { Liquid } from "./Materials/M-Liquid";
-import { BaseBottle } from "./Materials/M-BaseBottle";
-import { BaseTransmission } from "./Materials/M-BaseTransluscent";
-import { BaseBottleEx } from "./Materials/M-BaseBottleExtended";
+import { useLerpPosition } from "./useLerpPosition";
+import { useSmoothRotation } from "./useSmoothRotation";
+import BottlePart from "./BottlePart";
+import { Euler } from "three";
 
 export function BottleScroll(props) {
-  const { nodes, materials } = useGLTF("/Kandoblanc.gltf");
+  const { nodes } = useGLTF("/Kandoblanc.gltf"); // Only load nodes (geometry)
+  const scroll = useScroll();
 
   const bottle = useRef();
   const top = useRef();
   const neck = useRef();
   const obj = useRef();
-  const scroll = useScroll();
 
-  // State for hover
-  const [hoveredBottle, setHoveredBottle] = useState(false);
-  const [hoveredTop, setHoveredTop] = useState(false);
-  const [hoveredNeck, setHoveredNeck] = useState(false);
-
-  // State for last index
+  const [hovered, setHovered] = useState({
+    bottle: false,
+    top: false,
+    neck: false,
+  });
   const [atLastIndex, setAtLastIndex] = useState(false);
 
-  // Define positions and rotations for each step
   const positions = [
     { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
     { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
@@ -38,208 +35,103 @@ export function BottleScroll(props) {
     { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
   ];
 
-  // Initialize target values
-  const targetBottlePosition = useRef(new Vector3());
-  const targetTopPosition = useRef(new Vector3());
-  const targetNeckPosition = useRef(new Vector3());
+  const bottlePositions = positions.map((p) => p.bottle);
+  const topPositions = positions.map((p) => p.top);
+  const neckPositions = positions.map((p) => p.neck);
 
-  // Rotation references
-  const bottleRotation = useRef(new Euler());
-  const topRotation = useRef(new Euler());
-  const neckRotation = useRef(new Euler());
+  const updateBottlePosition = useLerpPosition(bottlePositions);
+  const updateTopPosition = useLerpPosition(topPositions);
+  const updateNeckPosition = useLerpPosition(neckPositions);
 
-  // Original rotations for resetting
-  const originalBottleRotation = useRef(new Euler());
-  const originalTopRotation = useRef(new Euler());
-  const originalNeckRotation = useRef(new Euler());
+  const updateBottleRotation = useSmoothRotation(new Euler());
+  const updateTopRotation = useSmoothRotation(new Euler());
+  const updateNeckRotation = useSmoothRotation(new Euler());
 
   useEffect(() => {
-    if (materials.Mat) {
-      materials.Mat.color.set(new Color(0x00ff00));
-      materials.Mat.needsUpdate = true; // Inform Three.js to update the material
+    if (nodes) {
+      updateBottleRotation(bottle, false, 0); // Initialize rotations
+      updateTopRotation(top, false, 0);
+      updateNeckRotation(neck, false, 0);
     }
-
-    // Store the original rotations
-    originalBottleRotation.current.copy(bottle.current.rotation);
-    originalTopRotation.current.copy(top.current.rotation);
-    originalNeckRotation.current.copy(neck.current.rotation);
-  }, [materials]); // This ensures the effect runs when materials are loaded
+  }, [nodes, updateBottleRotation, updateTopRotation, updateNeckRotation]);
 
   useFrame((state, delta) => {
     const offset = scroll.offset * (positions.length - 1);
-    const currentIndex = Math.floor(offset);
-    const nextIndex = Math.min(currentIndex + 1, positions.length - 1);
-    const progress = offset - currentIndex;
-    const currentPos = positions[currentIndex];
-    const nextPos = positions[nextIndex];
 
-    // Calculate target values
-    targetBottlePosition.current.lerpVectors(
-      new Vector3(...currentPos.bottle),
-      new Vector3(...nextPos.bottle),
-      progress
-    );
+    updateBottlePosition(bottle, offset);
+    updateTopPosition(top, offset);
+    updateNeckPosition(neck, offset);
 
-    targetTopPosition.current.lerpVectors(
-      new Vector3(...currentPos.top),
-      new Vector3(...nextPos.top),
-      progress
-    );
-
-    targetNeckPosition.current.lerpVectors(
-      new Vector3(...currentPos.neck),
-      new Vector3(...nextPos.neck),
-      progress
-    );
-
-    // Apply the calculated values directly to the positions
-    bottle.current.position.copy(targetBottlePosition.current);
-    top.current.position.copy(targetTopPosition.current);
-    neck.current.position.copy(targetNeckPosition.current);
-
-    // Determine if the last index is reached
     const atLastIndexNow = scroll.offset >= 1.0;
     if (atLastIndexNow !== atLastIndex) {
       setAtLastIndex(atLastIndexNow);
     }
 
-    // Update rotations for spinning effect when hovered or last index is reached
-    if (hoveredBottle || atLastIndex) {
-      bottleRotation.current.y += 0.01; // Adjust speed as needed
-    } else {
-      bottleRotation.current.y = MathUtils.damp(
-        bottleRotation.current.y,
-        getClosestRotation(
-          bottleRotation.current.y,
-          originalBottleRotation.current.y
-        ),
-        4, // Slower damping factor
-        delta
-      );
-    }
-
-    if (hoveredTop || atLastIndex) {
-      topRotation.current.y += 0.01; // Adjust speed as needed
-    } else {
-      topRotation.current.y = MathUtils.damp(
-        topRotation.current.y,
-        getClosestRotation(
-          topRotation.current.y,
-          originalTopRotation.current.y
-        ),
-        4, // Slower damping factor
-        delta
-      );
-    }
-
-    if (hoveredNeck || atLastIndex) {
-      neckRotation.current.y += 0.01; // Adjust speed as needed
-    } else {
-      neckRotation.current.y = MathUtils.damp(
-        neckRotation.current.y,
-        getClosestRotation(
-          neckRotation.current.y,
-          originalNeckRotation.current.y
-        ),
-        4, // Slower damping factor
-        delta
-      );
-    }
-
-    // Apply rotations
-    bottle.current.rotation.copy(bottleRotation.current);
-    top.current.rotation.copy(topRotation.current);
-    neck.current.rotation.copy(neckRotation.current);
+    updateBottleRotation(bottle, hovered.bottle || atLastIndex, delta);
+    updateTopRotation(top, hovered.top || atLastIndex, delta);
+    updateNeckRotation(neck, hovered.neck || atLastIndex, delta);
   });
 
-  const getClosestRotation = (current, original) => {
-    const currentRot =
-      ((current % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2); // normalize to [0, 2PI]
-    const originalRot =
-      ((original % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2); // normalize to [0, 2PI]
-    const deltaRot = currentRot - originalRot;
+  const handlePointerOver = (part) => (event) => {
+    event.stopPropagation();
+    setHovered((prev) => ({ ...prev, [part]: true }));
+  };
 
-    if (deltaRot > Math.PI) return originalRot + Math.PI * 2;
-    if (deltaRot < -Math.PI) return originalRot - Math.PI * 2;
-    return originalRot;
+  const handlePointerOut = (part) => (event) => {
+    event.stopPropagation();
+    setHovered((prev) => ({ ...prev, [part]: false }));
   };
 
   return (
     <group ref={obj} {...props} dispose={null}>
       <group
         ref={bottle}
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          setHoveredBottle(true);
-        }}
-        onPointerOut={(event) => {
-          event.stopPropagation();
-          setHoveredBottle(false);
-        }}
+        onPointerOver={handlePointerOver("bottle")}
+        onPointerOut={handlePointerOut("bottle")}
       >
-        <mesh
+        <BottlePart
           name="Bottle1"
-          castShadow
           geometry={nodes.Bottle1.geometry}
-          material={materials.Mat}
           position={[0, 0.053, 0]}
-        >
-          <BaseTransmission isColorMode={hoveredBottle || atLastIndex} />
-        </mesh>
-        <mesh
+          type="BaseTransmission"
+          hoverEffect={hovered.bottle || atLastIndex}
+        />
+        <BottlePart
           name="Liquid1"
-          castShadow
           geometry={nodes.Liquid1.geometry}
-          material={materials.Mat}
           position={[0, 0.053, 0]}
-        >
-          <Liquid />
-        </mesh>
+          type="Liquid"
+          hoverEffect={hovered.bottle || atLastIndex}
+        />
       </group>
 
       <group
         ref={top}
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          setHoveredTop(true);
-        }}
-        onPointerOut={(event) => {
-          event.stopPropagation();
-          setHoveredTop(false);
-        }}
+        onPointerOver={handlePointerOver("top")}
+        onPointerOut={handlePointerOut("top")}
       >
-        <mesh
+        <BottlePart
           name="Top"
-          castShadow
           geometry={nodes.Top.geometry}
-          material={materials.Mat}
           position={[0, 0.245, 0]}
           rotation={[-Math.PI / 2, 0, 0]}
-        >
-          <BaseBottleEx isBaseColor={hoveredTop || atLastIndex} />
-        </mesh>
+          type="BaseBottleEx"
+          hoverEffect={hovered.top || atLastIndex}
+        />
       </group>
 
       <group
         ref={neck}
-        onPointerOver={(event) => {
-          event.stopPropagation();
-          setHoveredNeck(true);
-        }}
-        onPointerOut={(event) => {
-          event.stopPropagation();
-          setHoveredNeck(false);
-        }}
+        onPointerOver={handlePointerOver("neck")}
+        onPointerOut={handlePointerOut("neck")}
       >
-        <mesh
+        <BottlePart
           name="Neck"
-          castShadow
           geometry={nodes.Neck.geometry}
-          material={materials.Mat}
           position={[0, 0.181, 0]}
-        >
-          <BaseBottleEx isBaseColor={hoveredNeck || atLastIndex} />
-        </mesh>
+          type="BaseBottleEx"
+          hoverEffect={hovered.neck || atLastIndex}
+        />
       </group>
     </group>
   );
