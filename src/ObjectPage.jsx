@@ -8,7 +8,7 @@ import { CameraWork } from "./components/CameraWork";
 function ObjectPage() {
   let colorbg = "#18181E";
 
-  // Define leva controls for pages and damping
+  // Define leva controls for pages and damping // remove for final project
   const { pages, damping } = useControls({
     pages: { value: 7, min: 1, max: 20, step: 1 },
     damping: { value: 0.3, min: 0, max: 1, step: 0.01 },
@@ -16,7 +16,6 @@ function ObjectPage() {
 
   return (
     <>
-      {/* <Perf position="top-left" /> */}
       <SceneEnv color={colorbg} />
       <ScrollControls pages={pages} damping={damping}>
         <BottleScroll />

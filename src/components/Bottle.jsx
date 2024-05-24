@@ -4,8 +4,10 @@ import LoadingContext from "./LoadingContext";
 import { useGLTF } from "@react-three/drei";
 import BottlePart from "./BottlePart";
 
+// function to create the bottle object in the landing page
+
 export function Bottle(props) {
-  const { nodes } = useGLTF("/Kandoblanc.gltf"); // Only load nodes (geometry)
+  const { nodes } = useGLTF("/Kandoblanc.gltf");
   const { setObjectLoaded } = useContext(LoadingContext);
 
   const bottle = useRef();

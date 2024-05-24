@@ -7,7 +7,7 @@ import BottlePart from "./BottlePart";
 import { Euler } from "three";
 
 export function BottleScroll(props) {
-  const { nodes } = useGLTF("/Kandoblanc.gltf"); // Only load nodes (geometry)
+  const { nodes } = useGLTF("/Kandoblanc.gltf");
   const scroll = useScroll();
 
   const bottle = useRef();
