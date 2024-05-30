@@ -3,7 +3,7 @@ import SceneEnv from "./components/Environment";
 import { BottleScroll } from "./components/BottleScroll";
 import { ScrollControls } from "@react-three/drei";
 import CameraRigScroll from "./components/CameraRigScroll";
-import { CameraWork } from "./components/CameraWork";
+import { Suspense } from "react";
 
 function ObjectPage() {
   let colorbg = "#18181E";

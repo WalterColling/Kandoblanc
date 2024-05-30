@@ -10,9 +10,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <Canvas
     shadows
     dpr={[2, 4]}
-    camera={{ position: [0.5, 0.2, 6], fov: 30, near: 0.1, far: 35 }}
+    camera={{ position: [0.5, 0.2, 1], fov: 30, near: 0.1, far: 35 }}
   >
-    {/* <Perf position="top-left" /> */}
+    <Perf position="top-left" />
+
     <Suspense fallback={null}>
       {/* loading can be placed instead of null if necessary */}
       <Intro />

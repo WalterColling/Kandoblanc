@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useThree } from "@react-three/fiber";
 
+// debug component to log the scene graph to the console
+
 function SceneGraphLogger() {
   const { scene } = useThree();
 

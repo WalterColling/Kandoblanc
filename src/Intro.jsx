@@ -17,7 +17,6 @@ function intro() {
 
       <LoadingContext.Provider value={{ objectLoaded, setObjectLoaded }}>
         <CameraRig />
-
         <DraggableElement draggable={isDraggable}>
           <Bottle />
         </DraggableElement>

@@ -1,10 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { useGLTF, useScroll } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useLerpPosition } from "./useLerpPosition";
 import { useSmoothRotation } from "./useSmoothRotation";
 import BottlePart from "./BottlePart";
 import { Euler } from "three";
+import debounce from "lodash.debounce";
 
 export function BottleScroll(props) {
   const { nodes } = useGLTF("/Kandoblanc.gltf");
@@ -22,22 +29,33 @@ export function BottleScroll(props) {
   });
   const [atLastIndex, setAtLastIndex] = useState(false);
 
-  const positions = [
-    { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
-    { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
-    { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
-    { bottle: [0, 0.0, 0], top: [0, 0.2, 0], neck: [0, 0.15, 0] },
-    { bottle: [0, 0.0, 0], top: [0, 0.2, 0], neck: [0, 0.15, 0] },
-    { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
-    { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
-    { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
-    { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
-    { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
-  ];
+  const positions = useMemo(
+    () => [
+      { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.2, 0], neck: [0, 0.15, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.2, 0], neck: [0, 0.15, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
+      { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
+    ],
+    []
+  );
 
-  const bottlePositions = positions.map((p) => p.bottle);
-  const topPositions = positions.map((p) => p.top);
-  const neckPositions = positions.map((p) => p.neck);
+  const bottlePositions = useMemo(
+    () => positions.map((p) => p.bottle),
+    [positions]
+  );
+  const topPositions = useMemo(() => positions.map((p) => p.top), [positions]);
+  const neckPositions = useMemo(
+    () => positions.map((p) => p.neck),
+    [positions]
+  );
 
   const updateBottlePosition = useLerpPosition(bottlePositions);
   const updateTopPosition = useLerpPosition(topPositions);
@@ -72,15 +90,29 @@ export function BottleScroll(props) {
     updateNeckRotation(neck, hovered.neck || atLastIndex, delta);
   });
 
-  const handlePointerOver = (part) => (event) => {
-    event.stopPropagation();
-    setHovered((prev) => ({ ...prev, [part]: true }));
-  };
+  const debouncedSetHovered = useCallback(
+    debounce((part, value) => {
+      setHovered((prev) => ({ ...prev, [part]: value }));
+    }, 14),
+    []
+  );
 
-  const handlePointerOut = (part) => (event) => {
-    event.stopPropagation();
-    setHovered((prev) => ({ ...prev, [part]: false }));
-  };
+  const handlePointerOver = useCallback(
+    (part) => (event) => {
+      event.stopPropagation();
+      debouncedSetHovered(part, true);
+    },
+    [debouncedSetHovered]
+  );
+
+  const handlePointerOut = useCallback(
+    (part) => (event) => {
+      event.stopPropagation();
+      setHovered((prev) => ({ ...prev, [part]: false }));
+      debouncedSetHovered.cancel(); // Cancel any pending debounced calls
+    },
+    [debouncedSetHovered]
+  );
 
   return (
     <group ref={obj} {...props} dispose={null}>
@@ -137,4 +169,4 @@ export function BottleScroll(props) {
   );
 }
 
-useGLTF.preload("/Kandoblanc.gltf");
+export default BottleScroll;

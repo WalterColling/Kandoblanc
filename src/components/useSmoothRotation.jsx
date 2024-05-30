@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { Euler, Quaternion, MathUtils } from "three";
 
+// Function to interpolate between two rotations
 export const useSmoothRotation = (initialRotation) => {
   const rotation = useRef(new Euler().copy(initialRotation));
   const originalRotation = useRef(new Euler().copy(initialRotation));
@@ -47,5 +48,3 @@ export const useSmoothRotation = (initialRotation) => {
 
   return updateRotation;
 };
-
-// debounce the rotation and the material update to improve performance - Memoization??

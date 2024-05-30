@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three";
-import { MeshPhysicalMaterial } from "three";
+import { useDebounce } from "use-debounce";
 
 export function BaseBottleEx({ isBaseColor }) {
-  const [baseColor, baseColorBW] = useLoader(TextureLoader, [
-    "./Kandoblanc_V03_Mat_BaseColor.webp",
-    "./Kandoblanc_V03_Mat_BaseColor_BW.webp",
-  ]);
+  const baseColorTexture = useLoader(
+    TextureLoader,
+    "./Kandoblanc_V03_Mat_BaseColor.webp"
+  );
+  const baseColorBWTexture = useLoader(
+    TextureLoader,
+    "./Kandoblanc_V03_Mat_BaseColor_BW.webp"
+  );
   const roughness = useLoader(
     TextureLoader,
     "./Kandoblanc_V03_Mat_Roughness.webp"
@@ -21,20 +25,21 @@ export function BaseBottleEx({ isBaseColor }) {
     "./Kandoblanc_V03_Mat_Normal.webp"
   );
 
-  // Flip the UVs of the textures
-  baseColor.flipY = false;
-  baseColorBW.flipY = false;
-  roughness.flipY = false;
-  metalness.flipY = false;
-  normalMap.flipY = false;
+  useEffect(() => {
+    baseColorTexture.flipY = false;
+    baseColorBWTexture.flipY = false;
+    roughness.flipY = false;
+    metalness.flipY = false;
+    normalMap.flipY = false;
+  }, [baseColorTexture, baseColorBWTexture, roughness, metalness, normalMap]);
 
-  const [texture, setTexture] = useState(baseColor);
+  const [debouncedIsBaseColor] = useDebounce(isBaseColor, 200); // Debounce value
+
+  const [texture, setTexture] = useState(baseColorTexture);
 
   useEffect(() => {
-    setTexture(isBaseColor ? baseColor : baseColorBW);
-  }, [isBaseColor, baseColor, baseColorBW]);
-
-  const roughnessFactor = 0.5; // Adjust the roughness factor as desired
+    setTexture(debouncedIsBaseColor ? baseColorTexture : baseColorBWTexture);
+  }, [debouncedIsBaseColor, baseColorTexture, baseColorBWTexture]);
 
   return (
     <meshPhysicalMaterial
@@ -43,7 +48,7 @@ export function BaseBottleEx({ isBaseColor }) {
       roughnessMap={roughness}
       metalnessMap={metalness}
       normalMap={normalMap}
-      roughness={roughnessFactor}
+      roughness={0.5}
       clearcoat={0.5}
     />
   );

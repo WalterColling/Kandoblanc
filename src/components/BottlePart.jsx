@@ -3,6 +3,8 @@ import { BaseTransmission } from "./Materials/M-BaseTransluscent";
 import { Liquid } from "./Materials/M-Liquid";
 import { BaseBottleEx } from "./Materials/M-BaseBottleExtended";
 
+// Component to create the bottle parts and apply the materials
+
 const BottlePart = forwardRef(
   ({ name, geometry, position, rotation, type, hoverEffect }, ref) => {
     const MaterialComponent =
