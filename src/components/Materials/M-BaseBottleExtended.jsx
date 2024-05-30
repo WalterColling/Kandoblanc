@@ -45,11 +45,11 @@ export function BaseBottleEx({ isBaseColor }) {
     <meshPhysicalMaterial
       attach="material"
       map={texture}
-      roughnessMap={roughness}
-      metalnessMap={metalness}
-      normalMap={normalMap}
-      roughness={0.5}
-      clearcoat={0.5}
+      // roughnessMap={roughness}
+      // metalnessMap={metalness}
+      // normalMap={normalMap}
+      roughness={0.1}
+      // clearcoat={0.5}
     />
   );
 }

@@ -1,8 +1,8 @@
-import React, { Suspense, useState, useEffect, useRef } from "react";
+import React, { Suspense, useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import { Canvas } from "@react-three/fiber";
-import ObjectPage from "./ObjectPage";
+import Intro from "./Intro";
 import { Perf } from "r3f-perf";
 import { PerformanceMonitor } from "@react-three/drei";
 import round from "lodash/round";
@@ -20,8 +20,8 @@ const App = () => {
     <Canvas
       shadows
       dpr={dpr}
-      camera={{ position: [0.5, 0.2, 5], fov: 30, near: 0.1, far: 35 }}
-      performance={{ min: 0.5 }}
+      camera={{ position: [0.5, 0.2, 1], fov: 30, near: 0.1, far: 35 }}
+      performance={{ min: 1 }}
     >
       <Perf position="top-left" />
 
@@ -33,14 +33,26 @@ const App = () => {
         flipflops={3}
         factor={0.5}
         step={0.1}
-        onIncline={() => setDpr(6)}
-        onDecline={() => setDpr(1)}
-        onChange={({ factor }) => handleDprChange(factor)}
-        onFallback={() => setDpr(2)}
+        onIncline={() => {
+          setDpr(4);
+          setSamples(256);
+        }}
+        onDecline={() => {
+          setDpr(1);
+          setSamples(8);
+        }}
+        onChange={({ factor }) => {
+          handleDprChange(factor);
+        }}
+        onFallback={() => {
+          setDpr(2);
+          setSamples(128);
+        }}
       >
         <Suspense fallback={null}>
-          <ObjectPage />
+          <Intro />
         </Suspense>
+
         <AdaptivePixelRatio />
       </PerformanceMonitor>
     </Canvas>

@@ -1,16 +1,14 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { useLoader } from "@react-three/fiber";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import LoadingContext from "./LoadingContext";
 import { useGLTF } from "@react-three/drei";
+import LoadingContext from "./LoadingContext";
 import BottlePart from "./BottlePart";
 
 useGLTF.preload("/Kandoblanc.gltf");
 
 // function to create the bottle object in the landing page
 
-export function Bottle(props) {
+export function Bottle({ samples, ...props }) {
   const { nodes } = useGLTF("/Kandoblanc.gltf");
   const { setObjectLoaded } = useContext(LoadingContext);
 
@@ -55,13 +53,8 @@ export function Bottle(props) {
           geometry={nodes.Bottle1.geometry}
           position={[0, 0.053, 0]}
           type="BaseTransmission"
+          samples={samples} // Pass samples prop
         />
-        {/* <BottlePart
-          name="Liquid1"
-          geometry={nodes.Liquid1.geometry}
-          position={[0, 0.053, 0]}
-          type="Liquid"
-        /> */}
       </group>
       <BottlePart
         ref={top}

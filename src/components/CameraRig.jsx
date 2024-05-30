@@ -16,7 +16,7 @@ function CameraRig() {
   const updateCameraPosition = useMemo(
     () =>
       throttle((pointer, viewport) => {
-        const x = pointer.x * (viewport.width / 2);
+        const x = pointer.x * (viewport.width / 4);
         const y = (1.2 + pointer.y) / 5;
         const z = 0.8;
         cameraPosition.set(x, y, z);

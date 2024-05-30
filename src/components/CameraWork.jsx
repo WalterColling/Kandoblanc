@@ -4,6 +4,8 @@ import { PerspectiveCamera, useHelper } from "@react-three/drei";
 import { CameraHelper, Vector3 } from "three";
 import { useControls } from "leva";
 
+// component to position camera and extract camera properties. (not used in the final project)
+
 export function CameraWork() {
   const cameraRef = useRef();
   const { fov, near, far, position, lookAt } = useControls("Camera", {

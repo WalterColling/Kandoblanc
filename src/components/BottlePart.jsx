@@ -21,7 +21,6 @@ const BottlePart = forwardRef(
         geometry={geometry}
         position={position}
         rotation={rotation}
-        castShadow
       >
         <MaterialComponent isBaseColor={hoverEffect} />
       </mesh>

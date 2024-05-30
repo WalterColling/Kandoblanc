@@ -5,7 +5,7 @@ import SceneEnv from "./components/Environment";
 import CameraRig from "./components/CameraRig";
 import LoadingContext from "./components/LoadingContext";
 
-function intro() {
+function Intro({ samples }) {
   let colorbg = "#18181E";
   let isDraggable = true;
 
@@ -14,15 +14,14 @@ function intro() {
   return (
     <>
       <SceneEnv color={colorbg} />
-
       <LoadingContext.Provider value={{ objectLoaded, setObjectLoaded }}>
         <CameraRig />
         <DraggableElement draggable={isDraggable}>
-          <Bottle />
+          <Bottle samples={samples} />
         </DraggableElement>
       </LoadingContext.Provider>
     </>
   );
 }
 
-export default intro;
+export default Intro;
