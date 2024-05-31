@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useSpring, a } from "@react-spring/three";
 import { useDrag } from "react-use-gesture";
 import { useThree, useFrame } from "@react-three/fiber";
@@ -16,13 +16,26 @@ function DraggableElement({ children, draggable = true }) {
     []
   );
 
+  const isMobile = useRef(false);
+
+  useEffect(() => {
+    const userAgent =
+      typeof window.navigator === "undefined" ? "" : navigator.userAgent;
+    isMobile.current =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        userAgent
+      );
+  }, []);
+
   const bind = useDrag(
     ({ movement: [mx], velocity, down }) => {
       if (!draggable) return;
 
       const speed = down ? velocity : 0;
+      const sensitivity = isMobile.current ? 50 : 1; // Increase sensitivity for mobile
       let newRot =
-        targetRotation + (mx / gl.domElement.clientWidth) * 2 * Math.PI;
+        targetRotation +
+        (mx / gl.domElement.clientWidth) * 2 * Math.PI * sensitivity;
       newRot =
         targetRotation +
         Math.min(Math.abs(newRot - targetRotation), 0.1) *
@@ -42,6 +55,7 @@ function DraggableElement({ children, draggable = true }) {
     },
     {
       domTarget: gl.domElement,
+      eventOptions: { passive: false },
     }
   );
 

@@ -14,13 +14,17 @@ import { Euler } from "three";
 import debounce from "lodash.debounce";
 
 export function BottleScroll(props) {
-  const { nodes } = useGLTF("/Kandoblanc.gltf");
+  const { nodes } = useGLTF("/Kandoblanc_opt_02.gltf");
   const scroll = useScroll();
 
   const bottle = useRef();
   const top = useRef();
   const neck = useRef();
   const obj = useRef();
+
+  const bottleProxy = useRef();
+  const topProxy = useRef();
+  const neckProxy = useRef();
 
   const [hovered, setHovered] = useState({
     bottle: false,
@@ -31,7 +35,6 @@ export function BottleScroll(props) {
 
   const positions = useMemo(
     () => [
-      { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
       { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
       { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
       { bottle: [0, 0.0, 0], top: [0, 0.2, 0], neck: [0, 0.15, 0] },
@@ -80,6 +83,17 @@ export function BottleScroll(props) {
     updateTopPosition(top, offset);
     updateNeckPosition(neck, offset);
 
+    // Update proxy positions
+    if (bottle.current && bottleProxy.current) {
+      bottleProxy.current.position.copy(bottle.current.position);
+    }
+    if (top.current && topProxy.current) {
+      topProxy.current.position.copy(top.current.position);
+    }
+    if (neck.current && neckProxy.current) {
+      neckProxy.current.position.copy(neck.current.position);
+    }
+
     const atLastIndexNow = scroll.offset >= 1.0;
     if (atLastIndexNow !== atLastIndex) {
       setAtLastIndex(atLastIndexNow);
@@ -116,32 +130,62 @@ export function BottleScroll(props) {
 
   return (
     <group ref={obj} {...props} dispose={null}>
+      {/* Proxy geometry group */}
       <group
-        ref={bottle}
+        ref={bottleProxy}
         onPointerOver={handlePointerOver("bottle")}
         onPointerOut={handlePointerOut("bottle")}
       >
+        <>
+          <mesh position={[0, 0.199, 0]}>
+            <cylinderGeometry args={[0.02, 0.02, 0.04, 8]} />
+            <meshBasicMaterial visible={false} />
+          </mesh>
+          <mesh position={[0, 0.16, 0]}>
+            <cylinderGeometry args={[0.02, 0.08, 0.04, 8]} />
+            <meshBasicMaterial visible={false} />
+          </mesh>
+          <mesh position={[0, 0.027, 0]}>
+            <cylinderGeometry args={[0.08, 0.1, 0.24, 8]} />
+            <meshBasicMaterial visible={false} />
+          </mesh>
+        </>
+      </group>
+
+      <group
+        ref={topProxy}
+        onPointerOver={handlePointerOver("top")}
+        onPointerOut={handlePointerOut("top")}
+      >
+        <mesh position={[0, 0.245, 0]}>
+          <cylinderGeometry args={[0.1, 0.1, 0.1, 8]} />
+          <meshBasicMaterial visible={false} />
+        </mesh>
+      </group>
+
+      <group
+        ref={neckProxy}
+        onPointerOver={handlePointerOver("neck")}
+        onPointerOut={handlePointerOut("neck")}
+      >
+        <mesh position={[0, 0.178, 0]}>
+          <cylinderGeometry args={[0.04, 0.09, 0.065, 8]} />
+          <meshBasicMaterial visible={false} />
+        </mesh>
+      </group>
+
+      {/* Real geometry group */}
+      <group ref={bottle}>
         <BottlePart
-          name="Bottle1"
-          geometry={nodes.Bottle1.geometry}
+          name="Bottle"
+          geometry={nodes.Bottle.geometry}
           position={[0, 0.053, 0]}
           type="BaseTransmission"
           hoverEffect={hovered.bottle || atLastIndex}
         />
-        <BottlePart
-          name="Liquid1"
-          geometry={nodes.Liquid1.geometry}
-          position={[0, 0.053, 0]}
-          type="Liquid"
-          hoverEffect={hovered.bottle || atLastIndex}
-        />
       </group>
 
-      <group
-        ref={top}
-        onPointerOver={handlePointerOver("top")}
-        onPointerOut={handlePointerOut("top")}
-      >
+      <group ref={top}>
         <BottlePart
           name="Top"
           geometry={nodes.Top.geometry}
@@ -152,11 +196,7 @@ export function BottleScroll(props) {
         />
       </group>
 
-      <group
-        ref={neck}
-        onPointerOver={handlePointerOver("neck")}
-        onPointerOut={handlePointerOut("neck")}
-      >
+      <group ref={neck}>
         <BottlePart
           name="Neck"
           geometry={nodes.Neck.geometry}
