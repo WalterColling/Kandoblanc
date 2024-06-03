@@ -1,12 +1,16 @@
 import React from "react";
+import { useDebounce } from "use-debounce";
 
-export function Liquid() {
+export function Liquid(isBaseColor) {
+  const [debouncedIsBaseColor] = useDebounce(isBaseColor, 200); // Debounce value
+  const color = debouncedIsBaseColor ? "#808080" : "#ff8c00";
+
   return (
     <meshPhysicalMaterial
       attach="material"
-      color="#d3730d"
-      emissive="#d3730d"
-      emissiveIntensity={2}
+      color={color}
+      emissive={color}
+      // emissiveIntensity={0.3}
     />
   );
 }

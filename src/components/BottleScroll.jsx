@@ -9,22 +9,23 @@ import { useGLTF, useScroll } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useLerpPosition } from "./useLerpPosition";
 import { useSmoothRotation } from "./useSmoothRotation";
-import BottlePart from "./BottlePart";
 import { Euler } from "three";
 import debounce from "lodash.debounce";
+import Model from "./Model";
 
 export function BottleScroll(props) {
-  const { nodes } = useGLTF("/Kandoblanc_opt_02.gltf");
   const scroll = useScroll();
 
-  const bottle = useRef();
-  const top = useRef();
-  const neck = useRef();
-  const obj = useRef();
+  const LiquidRef = useRef();
+  const FloorRef = useRef();
+  const bottleRef = useRef();
+  const topRef = useRef();
+  const neckRef = useRef();
+  const objRef = useRef();
 
-  const bottleProxy = useRef();
-  const topProxy = useRef();
-  const neckProxy = useRef();
+  const bottleProxyRef = useRef();
+  const topProxyRef = useRef();
+  const neckProxyRef = useRef();
 
   const [hovered, setHovered] = useState({
     bottle: false,
@@ -32,6 +33,18 @@ export function BottleScroll(props) {
     neck: false,
   });
   const [atLastIndex, setAtLastIndex] = useState(false);
+
+  const initialPositions = {
+    bottle: [0, 0.053, 0],
+    top: [0, 0.226794, 0],
+    neck: [0, 0.181, 0],
+  };
+
+  const initialRotations = {
+    bottle: [0, 0, 0],
+    top: [0, 0, 0],
+    neck: [0, 0, 0],
+  };
 
   const positions = useMemo(
     () => [
@@ -43,20 +56,36 @@ export function BottleScroll(props) {
       { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
       { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
       { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
-      { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
-      { bottle: [0, 0.0, 0], top: [0, 0.25, 0], neck: [0, 0.15, 0] },
       { bottle: [0, 0.0, 0], top: [0, 0.0, 0], neck: [0, 0.0, 0] },
     ],
     []
   );
 
   const bottlePositions = useMemo(
-    () => positions.map((p) => p.bottle),
+    () =>
+      positions.map((p) => [
+        p.bottle[0],
+        p.bottle[1] + initialPositions.bottle[1],
+        p.bottle[2],
+      ]),
     [positions]
   );
-  const topPositions = useMemo(() => positions.map((p) => p.top), [positions]);
+  const topPositions = useMemo(
+    () =>
+      positions.map((p) => [
+        p.top[0],
+        p.top[1] + initialPositions.top[1],
+        p.top[2],
+      ]),
+    [positions]
+  );
   const neckPositions = useMemo(
-    () => positions.map((p) => p.neck),
+    () =>
+      positions.map((p) => [
+        p.neck[0],
+        p.neck[1] + initialPositions.neck[1],
+        p.neck[2],
+      ]),
     [positions]
   );
 
@@ -64,34 +93,32 @@ export function BottleScroll(props) {
   const updateTopPosition = useLerpPosition(topPositions);
   const updateNeckPosition = useLerpPosition(neckPositions);
 
-  const updateBottleRotation = useSmoothRotation(new Euler());
-  const updateTopRotation = useSmoothRotation(new Euler());
-  const updateNeckRotation = useSmoothRotation(new Euler());
-
-  useEffect(() => {
-    if (nodes) {
-      updateBottleRotation(bottle, false, 0); // Initialize rotations
-      updateTopRotation(top, false, 0);
-      updateNeckRotation(neck, false, 0);
-    }
-  }, [nodes, updateBottleRotation, updateTopRotation, updateNeckRotation]);
+  const updateBottleRotation = useSmoothRotation(
+    new Euler(...initialRotations.bottle)
+  );
+  const updateTopRotation = useSmoothRotation(
+    new Euler(...initialRotations.top)
+  );
+  const updateNeckRotation = useSmoothRotation(
+    new Euler(...initialRotations.neck)
+  );
 
   useFrame((state, delta) => {
     const offset = scroll.offset * (positions.length - 1);
 
-    updateBottlePosition(bottle, offset);
-    updateTopPosition(top, offset);
-    updateNeckPosition(neck, offset);
+    updateBottlePosition(bottleRef, offset);
+    updateTopPosition(topRef, offset);
+    updateNeckPosition(neckRef, offset);
 
     // Update proxy positions
-    if (bottle.current && bottleProxy.current) {
-      bottleProxy.current.position.copy(bottle.current.position);
+    if (bottleRef.current && bottleProxyRef.current) {
+      bottleProxyRef.current.position.copy(bottleRef.current.position);
     }
-    if (top.current && topProxy.current) {
-      topProxy.current.position.copy(top.current.position);
+    if (topRef.current && topProxyRef.current) {
+      topProxyRef.current.position.copy(topRef.current.position);
     }
-    if (neck.current && neckProxy.current) {
-      neckProxy.current.position.copy(neck.current.position);
+    if (neckRef.current && neckProxyRef.current) {
+      neckProxyRef.current.position.copy(neckRef.current.position);
     }
 
     const atLastIndexNow = scroll.offset >= 1.0;
@@ -99,9 +126,9 @@ export function BottleScroll(props) {
       setAtLastIndex(atLastIndexNow);
     }
 
-    updateBottleRotation(bottle, hovered.bottle || atLastIndex, delta);
-    updateTopRotation(top, hovered.top || atLastIndex, delta);
-    updateNeckRotation(neck, hovered.neck || atLastIndex, delta);
+    updateBottleRotation(bottleRef, hovered.bottle || atLastIndex, delta);
+    updateTopRotation(topRef, hovered.top || atLastIndex, delta);
+    updateNeckRotation(neckRef, hovered.neck || atLastIndex, delta);
   });
 
   const debouncedSetHovered = useCallback(
@@ -129,81 +156,60 @@ export function BottleScroll(props) {
   );
 
   return (
-    <group ref={obj} {...props} dispose={null}>
+    <group ref={objRef} {...props} dispose={null}>
+      {/* Real geometry group */}
+      <Model
+        refs={{
+          Bottle_Low: bottleRef,
+          Top: topRef,
+          Neck: neckRef,
+          Liquid: LiquidRef,
+          Floor: FloorRef,
+          Bottle_Proxy: bottleProxyRef,
+          Top_Proxy: topProxyRef,
+          Neck_Proxy: neckProxyRef,
+        }}
+        hoverEffects={{
+          Bottle_Low: hovered.bottle || atLastIndex,
+          Top: hovered.top || atLastIndex,
+          Neck: hovered.neck || atLastIndex,
+        }}
+        meshNames={[
+          "Bottle_Low",
+          "Top",
+          "Neck",
+          "Liquid",
+          "Floor",
+          "Bottle_Proxy",
+          "Top_Proxy",
+          "Neck_Proxy",
+        ]}
+        {...props}
+      />
+
       {/* Proxy geometry group */}
       <group
-        ref={bottleProxy}
+        ref={bottleProxyRef}
         onPointerOver={handlePointerOver("bottle")}
         onPointerOut={handlePointerOut("bottle")}
       >
-        <>
-          <mesh position={[0, 0.199, 0]}>
-            <cylinderGeometry args={[0.02, 0.02, 0.04, 8]} />
-            <meshBasicMaterial visible={false} />
-          </mesh>
-          <mesh position={[0, 0.16, 0]}>
-            <cylinderGeometry args={[0.02, 0.08, 0.04, 8]} />
-            <meshBasicMaterial visible={false} />
-          </mesh>
-          <mesh position={[0, 0.027, 0]}>
-            <cylinderGeometry args={[0.08, 0.1, 0.24, 8]} />
-            <meshBasicMaterial visible={false} />
-          </mesh>
-        </>
+        <mesh name="Bottle_Proxy" />
       </group>
 
       <group
-        ref={topProxy}
+        ref={topProxyRef}
         onPointerOver={handlePointerOver("top")}
         onPointerOut={handlePointerOut("top")}
       >
-        <mesh position={[0, 0.245, 0]}>
-          <cylinderGeometry args={[0.1, 0.1, 0.1, 8]} />
-          <meshBasicMaterial visible={false} />
-        </mesh>
+        <mesh name="Top_Proxy" />
       </group>
 
       <group
-        ref={neckProxy}
+        ref={neckProxyRef}
         onPointerOver={handlePointerOver("neck")}
         onPointerOut={handlePointerOut("neck")}
       >
-        <mesh position={[0, 0.178, 0]}>
-          <cylinderGeometry args={[0.04, 0.09, 0.065, 8]} />
-          <meshBasicMaterial visible={false} />
-        </mesh>
-      </group>
-
-      {/* Real geometry group */}
-      <group ref={bottle}>
-        <BottlePart
-          name="Bottle"
-          geometry={nodes.Bottle.geometry}
-          position={[0, 0.053, 0]}
-          type="BaseTransmission"
-          hoverEffect={hovered.bottle || atLastIndex}
-        />
-      </group>
-
-      <group ref={top}>
-        <BottlePart
-          name="Top"
-          geometry={nodes.Top.geometry}
-          position={[0, 0.245, 0]}
-          rotation={[-Math.PI / 2, 0, 0]}
-          type="BaseBottleEx"
-          hoverEffect={hovered.top || atLastIndex}
-        />
-      </group>
-
-      <group ref={neck}>
-        <BottlePart
-          name="Neck"
-          geometry={nodes.Neck.geometry}
-          position={[0, 0.181, 0]}
-          type="BaseBottleEx"
-          hoverEffect={hovered.neck || atLastIndex}
-        />
+        <mesh name="Neck_Proxy" />
       </group>
     </group>
   );

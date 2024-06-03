@@ -15,6 +15,7 @@
     "@react-three/fiber": "^8.16.2",
     "@react-three/postprocessing": "^2.16.2",
     "@use-gesture/react": "^10.3.1",
+    "camera-controls": "^2.8.4",
     "gsap": "^3.12.5",
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",

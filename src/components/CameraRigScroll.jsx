@@ -1,27 +1,40 @@
-import React, { useRef, useMemo } from "react";
+import React, { useRef, useMemo, useState, useEffect } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Vector3, MathUtils } from "three";
-import { useScroll } from "@react-three/drei";
+import { OrbitControls, useScroll } from "@react-three/drei";
 
 function CameraRigScroll() {
   const { camera } = useThree();
   const scroll = useScroll();
+  const [positions, setPositions] = useState([]);
 
-  const positions = useMemo(
-    () => [
-      { position: [0, 0.2, 0.5], fov: 35, lookAt: [0, 0.35, 0] },
-      { position: [0, 0.2, 0.5], fov: 35, lookAt: [0, 0.24, 0] },
-      { position: [0, 0.25, 0.6], fov: 35, lookAt: [0, 0.08, 0] },
-      { position: [0, 0.25, 0.5], fov: 35, lookAt: [0, 0.08, 0] },
-      { position: [0, 0.28, 0.5], fov: 35, lookAt: [0, 0.08, 0] },
-      { position: [0, 0.3, 0.5], fov: 35, lookAt: [0, 0.3, 0] },
-      { position: [0, 0.37, 0.5], fov: 35, lookAt: [0, 0.3, 0] },
-      { position: [0, 0.45, 0.5], fov: 35, lookAt: [0, 0.45, 0] },
-      { position: [0, 0.5, 0.5], fov: 35, lookAt: [0, 0.45, 0] },
-      { position: [0, 0.2, 0.6], fov: 35, lookAt: [0, 0.1, 0] },
-    ],
-    []
-  );
+  const calculateZPosition = () => {
+    const windowHeight = window.innerHeight;
+    return 0.5 + windowHeight * 0.0001; // Example calculation, adjust as needed
+  };
+
+  const updatePositions = () => {
+    const zPos = calculateZPosition();
+    setPositions([
+      { position: [0, 0.2, zPos], fov: 35, lookAt: [0, 0.35, 0] },
+      { position: [0, 0.2, zPos], fov: 35, lookAt: [0, 0.24, 0] },
+      { position: [0, 0.25, zPos + 0.1], fov: 35, lookAt: [0, 0.08, 0] },
+      { position: [0, 0.25, zPos], fov: 35, lookAt: [0, 0.08, 0] },
+      { position: [0, 0.3, zPos], fov: 35, lookAt: [0, 0.3, 0] },
+      { position: [0, 0.37, zPos], fov: 35, lookAt: [0, 0.3, 0] },
+      { position: [0, 0.45, zPos], fov: 35, lookAt: [0, 0.45, 0] },
+      { position: [0, 0.5, zPos], fov: 35, lookAt: [0, 0.45, 0] },
+      { position: [0, 0.2, zPos + 0.1], fov: 35, lookAt: [0, 0.15, 0] },
+    ]);
+  };
+
+  useEffect(() => {
+    updatePositions();
+    window.addEventListener("resize", updatePositions);
+    return () => {
+      window.removeEventListener("resize", updatePositions);
+    };
+  }, []);
 
   // Initialize target values for damping
   const targetPosition = useRef(new Vector3());
@@ -33,6 +46,8 @@ function CameraRigScroll() {
   const nextLookAtVector = useRef(new Vector3());
 
   useFrame(() => {
+    if (positions.length === 0) return;
+
     let offset = scroll.offset * (positions.length - 1);
     offset = Math.max(0, Math.min(offset, positions.length - 1));
 

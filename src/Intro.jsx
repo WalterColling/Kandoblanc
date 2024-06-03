@@ -1,26 +1,43 @@
-import React, { useState } from "react";
-import { Bottle } from "./components/Bottle";
-import DraggableElement from "./components/DraggableElement";
-import SceneEnv from "./components/Environment";
-import CameraRig from "./components/CameraRig";
+import React, { useContext } from "react";
+import { Canvas } from "@react-three/fiber";
+import { Perf } from "r3f-perf";
+
+import Stage from "./components/Stage";
+
 import LoadingContext from "./components/LoadingContext";
+import { BottleIntro } from "./components/BottleIntroAnimation";
+import { OrbitControls } from "@react-three/drei";
 
 function Intro() {
   let colorbg = "#18181E";
-  let isDraggable = true;
 
-  const [objectLoaded, setObjectLoaded] = useState(false);
+  const { setObjectLoaded } = useContext(LoadingContext);
 
   return (
-    <>
-      <SceneEnv color={colorbg} />
-      <LoadingContext.Provider value={{ objectLoaded, setObjectLoaded }}>
-        <CameraRig />
-        <DraggableElement draggable={isDraggable}>
-          <Bottle />
-        </DraggableElement>
-      </LoadingContext.Provider>
-    </>
+    <Canvas
+      shadows
+      dpr={[2, 4]}
+      camera={{ position: [0, 0.1, 1], fov: 25, near: 0.1, far: 35 }}
+    >
+      <Perf position="top-left" />
+
+      <Stage color={colorbg} />
+
+      <BottleIntro />
+
+      <OrbitControls
+        makeDefault
+        enableDamping={true}
+        dampingFactor={0.05}
+        autoRotate
+        autoRotateSpeed={0.5}
+        enablePan={false}
+        enableZoom={false}
+        maxPolarAngle={Math.PI / 2.2}
+        minPolarAngle={Math.PI / 2.2}
+        target={[0, 0.17, 0]}
+      />
+    </Canvas>
   );
 }
 
