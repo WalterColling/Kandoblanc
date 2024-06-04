@@ -1,11 +1,10 @@
-import React, { memo, useEffect, useRef, useState } from "react";
-import { ObjectLoader } from "three";
+import React, { memo, useEffect } from "react";
 import { BaseTransmission } from "./Materials/M-BaseTransluscent";
 import { Liquid } from "./Materials/M-Liquid";
 import { BaseBottleEx } from "./Materials/M-BaseBottleExtended";
-import Worker from "./dracoWorker?worker";
 import { Floor } from "./Materials/Floor";
 import { Proxy } from "./Materials/Proxy";
+import useStore from "./useStore";
 
 const Model = memo(
   ({
@@ -17,30 +16,12 @@ const Model = memo(
     onLoaded,
     ...props
   }) => {
-    const [model, setModel] = useState(null);
-    const workerRef = useRef();
+    const model = useStore((state) => state.model);
+    const loadModel = useStore((state) => state.loadModel);
 
     useEffect(() => {
-      workerRef.current = new Worker();
-      workerRef.current.onmessage = (event) => {
-        const { type, scene, error } = event.data;
-        if (type === "load") {
-          const loader = new ObjectLoader();
-          const loadedScene = loader.parse(scene);
-          setModel(loadedScene);
-          if (onLoaded) onLoaded();
-        } else if (type === "error") {
-          console.error("Error loading model:", error);
-        }
-      };
-      workerRef.current.postMessage({ url: "/Kandoblanc-Models04_draco.glb" });
-
-      return () => {
-        if (workerRef.current) {
-          workerRef.current.terminate();
-        }
-      };
-    }, [onLoaded]);
+      loadModel(onLoaded);
+    }, [loadModel, onLoaded]);
 
     if (!model) return null;
 

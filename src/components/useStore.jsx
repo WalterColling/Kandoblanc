@@ -4,6 +4,7 @@ import Worker from "./dracoWorker?worker";
 
 const useStore = create((set) => ({
   model: null,
+  textures: {},
   loadModel: async (onLoaded) => {
     const worker = new Worker();
 

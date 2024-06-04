@@ -34,33 +34,39 @@ export function BottleIntro({ ...props }) {
       // Introduce a small delay before starting the initial animation
       gsap.delayedCall(0.2, () => {
         // Start the initial animation
-        gsap.from([topRef.current.position], {
-          duration: 2.5,
-          y: 0.6,
-          ease: "power3.out",
-          delay: 0.2,
-        });
+        if (topRef.current) {
+          gsap.from([topRef.current.position], {
+            duration: 2.5,
+            y: 0.6,
+            ease: "power3.out",
+            delay: 0.2,
+          });
+        }
 
-        gsap.from([neckRef.current.position], {
-          duration: 2.2,
-          y: 0.3,
-          ease: "power3.out",
-          delay: 0.2,
-        });
+        if (neckRef.current) {
+          gsap.from([neckRef.current.position], {
+            duration: 2.2,
+            y: 0.3,
+            ease: "power3.out",
+            delay: 0.2,
+          });
+        }
 
-        gsap.from([obj.current.position], {
-          duration: 3,
-          x: -0.05,
-          y: 0.2,
-          z: 0.6,
-          ease: "power3.out",
-        });
+        if (obj.current) {
+          gsap.from([obj.current.position], {
+            duration: 3,
+            x: -0.05,
+            y: 0.2,
+            z: 0.6,
+            ease: "power3.out",
+          });
 
-        gsap.from([obj.current.rotation], {
-          duration: 4.2,
-          y: -3,
-          ease: "power3.out",
-        });
+          gsap.from([obj.current.rotation], {
+            duration: 4.2,
+            y: -3,
+            ease: "power3.out",
+          });
+        }
 
         // Trigger the second animation after the initial one is complete
         setAnimationTriggered(true);
@@ -71,11 +77,13 @@ export function BottleIntro({ ...props }) {
   useEffect(() => {
     if (animationTriggered) {
       gsap.delayedCall(3, () => {
-        gsap.to(obj.current.position, {
-          duration: 2,
-          y: obj.current.position.y + 0.05, // Adjust the y-axis value as needed
-          ease: "power3.out",
-        });
+        if (obj.current) {
+          gsap.to(obj.current.position, {
+            duration: 2,
+            y: obj.current.position.y + 0.05, // Adjust the y-axis value as needed
+            ease: "power3.out",
+          });
+        }
       });
     }
   }, [animationTriggered]);
