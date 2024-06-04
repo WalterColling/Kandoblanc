@@ -5,13 +5,13 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
-import { useGLTF, useScroll } from "@react-three/drei";
+import { useScroll } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
-import { useLerpPosition } from "./useLerpPosition";
-import { useSmoothRotation } from "./useSmoothRotation";
 import { Euler } from "three";
 import debounce from "lodash.debounce";
 import Model from "./Model";
+import { useLerpPosition } from "./useLerpPosition";
+import { useSmoothRotation } from "./useSmoothRotation";
 
 export function BottleScroll(props) {
   const scroll = useScroll();
@@ -134,6 +134,7 @@ export function BottleScroll(props) {
   const debouncedSetHovered = useCallback(
     debounce((part, value) => {
       setHovered((prev) => ({ ...prev, [part]: value }));
+      console.log(`Hover state for ${part}:`, value);
     }, 14),
     []
   );
@@ -142,6 +143,7 @@ export function BottleScroll(props) {
     (part) => (event) => {
       event.stopPropagation();
       debouncedSetHovered(part, true);
+      console.log(`Pointer over ${part}`);
     },
     [debouncedSetHovered]
   );
@@ -151,6 +153,7 @@ export function BottleScroll(props) {
       event.stopPropagation();
       setHovered((prev) => ({ ...prev, [part]: false }));
       debouncedSetHovered.cancel(); // Cancel any pending debounced calls
+      console.log(`Pointer out ${part}`);
     },
     [debouncedSetHovered]
   );
@@ -184,33 +187,18 @@ export function BottleScroll(props) {
           "Top_Proxy",
           "Neck_Proxy",
         ]}
+        onPointerOverHandlers={{
+          Bottle_Proxy: handlePointerOver("bottle"),
+          Top_Proxy: handlePointerOver("top"),
+          Neck_Proxy: handlePointerOver("neck"),
+        }}
+        onPointerOutHandlers={{
+          Bottle_Proxy: handlePointerOut("bottle"),
+          Top_Proxy: handlePointerOut("top"),
+          Neck_Proxy: handlePointerOut("neck"),
+        }}
         {...props}
       />
-
-      {/* Proxy geometry group */}
-      <group
-        ref={bottleProxyRef}
-        onPointerOver={handlePointerOver("bottle")}
-        onPointerOut={handlePointerOut("bottle")}
-      >
-        <mesh name="Bottle_Proxy" />
-      </group>
-
-      <group
-        ref={topProxyRef}
-        onPointerOver={handlePointerOver("top")}
-        onPointerOut={handlePointerOut("top")}
-      >
-        <mesh name="Top_Proxy" />
-      </group>
-
-      <group
-        ref={neckProxyRef}
-        onPointerOver={handlePointerOver("neck")}
-        onPointerOut={handlePointerOut("neck")}
-      >
-        <mesh name="Neck_Proxy" />
-      </group>
     </group>
   );
 }

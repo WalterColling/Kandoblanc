@@ -1,21 +1,10 @@
 import React, { useRef, useMemo } from "react";
-import {
-  Environment,
-  Plane,
-  MeshReflectorMaterial,
-  ContactShadows,
-  BakeShadows,
-} from "@react-three/drei";
-import { DirectionalLight } from "three";
+import { Environment } from "@react-three/drei";
 
 function Stage({ color }) {
   const groupRef = useRef();
-  // const fogArgs = useMemo(() => [color, 0.5, 3], [color]);
-  const backgroundColor = useMemo(() => [color], [color]);
 
-  const planeArgs = useMemo(() => [20, 20], []);
-  const rotationArgs = useMemo(() => [-Math.PI / 2, 0, 0], []);
-  const positionArgs = useMemo(() => [0, -0.15, 0], []);
+  const backgroundColor = useMemo(() => [color], [color]);
 
   return (
     <>

@@ -11,8 +11,8 @@ const Root = () => {
 
   return (
     <LoadingContext.Provider value={{ objectLoaded, setObjectLoaded }}>
-      {/* <IntroCopy /> */}
-      {/* <Loading /> */}
+      <IntroCopy />
+      <Loading />
       <Intro />
     </LoadingContext.Provider>
   );
