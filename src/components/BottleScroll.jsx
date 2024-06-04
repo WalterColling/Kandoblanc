@@ -15,7 +15,7 @@ import { useSmoothRotation } from "./useSmoothRotation";
 import LoadingContext from "./LoadingContext";
 
 export function BottleScroll(props) {
-  const { setObjectLoaded } = useContext(LoadingContext); // Access the context
+  const { setObjectLoaded } = useContext(LoadingContext);
   const scroll = useScroll();
 
   const LiquidRef = useRef();
@@ -127,23 +127,28 @@ export function BottleScroll(props) {
     if (atLastIndexNow !== atLastIndex) {
       setAtLastIndex(atLastIndexNow);
       if (atLastIndexNow) {
-        setHovered({
+        setHovered((prev) => ({
+          bottle: true,
+          top: true,
+          neck: true,
+        }));
+      } else {
+        setHovered((prev) => ({
           bottle: false,
           top: false,
           neck: false,
-        });
+        }));
       }
     }
 
-    updateBottleRotation(bottleRef, hovered.bottle && !atLastIndexNow, delta);
-    updateTopRotation(topRef, hovered.top && !atLastIndexNow, delta);
-    updateNeckRotation(neckRef, hovered.neck && !atLastIndexNow, delta);
+    updateBottleRotation(bottleRef, hovered.bottle || atLastIndexNow, delta);
+    updateTopRotation(topRef, hovered.top || atLastIndexNow, delta);
+    updateNeckRotation(neckRef, hovered.neck || atLastIndexNow, delta);
   });
 
   const debouncedSetHovered = useCallback(
     debounce((part, value) => {
       setHovered((prev) => ({ ...prev, [part]: value }));
-      // console.log(`Hover state for ${part}:`, value);
     }, 14),
     []
   );
@@ -152,7 +157,6 @@ export function BottleScroll(props) {
     (part) => (event) => {
       event.stopPropagation();
       debouncedSetHovered(part, true);
-      // console.log(`Pointer over ${part}`);
     },
     [debouncedSetHovered]
   );
@@ -161,15 +165,14 @@ export function BottleScroll(props) {
     (part) => (event) => {
       event.stopPropagation();
       setHovered((prev) => ({ ...prev, [part]: false }));
-      debouncedSetHovered.cancel(); // Cancel any pending debounced calls
-      // console.log(`Pointer out ${part}`);
+      debouncedSetHovered.cancel();
     },
     [debouncedSetHovered]
   );
 
   const handleModelLoaded = () => {
     setIsModelLoaded(true);
-    setObjectLoaded(true); // Update the context
+    setObjectLoaded(true);
   };
 
   const [isModelLoaded, setIsModelLoaded] = useState(false);
@@ -177,7 +180,6 @@ export function BottleScroll(props) {
 
   useEffect(() => {
     (async () => {
-      // Dynamically import the Model component
       const modelModule = await import("./Model");
       setModel(() => modelModule.default);
     })();
@@ -198,10 +200,11 @@ export function BottleScroll(props) {
             Neck_Proxy: neckProxyRef,
           }}
           hoverEffects={{
-            Bottle_Low: hovered.bottle && !atLastIndex,
-            Top: hovered.top && !atLastIndex,
-            Neck: hovered.neck && !atLastIndex,
+            Bottle_Low: hovered.bottle || atLastIndex,
+            Top: hovered.top || atLastIndex,
+            Neck: hovered.neck || atLastIndex,
           }}
+          atLastIndex={atLastIndex}
           meshNames={[
             "Bottle_Low",
             "Top",
@@ -212,7 +215,7 @@ export function BottleScroll(props) {
             "Top_Proxy",
             "Neck_Proxy",
           ]}
-          onLoaded={handleModelLoaded} // Ensure model loaded callback is set
+          onLoaded={handleModelLoaded}
           onPointerOverHandlers={{
             Bottle_Proxy: handlePointerOver("bottle"),
             Top_Proxy: handlePointerOver("top"),

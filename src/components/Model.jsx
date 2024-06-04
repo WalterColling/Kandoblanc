@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { BaseTransmission } from "./Materials/M-BaseTransluscent";
 import { Liquid } from "./Materials/M-Liquid";
 import { BaseBottleEx } from "./Materials/M-BaseBottleExtended";
@@ -19,11 +19,16 @@ const Model = memo(
     const model = useStore((state) => state.model);
     const loadModel = useStore((state) => state.loadModel);
 
+    const [materialsLoaded, setMaterialsLoaded] = useState(false);
+
     useEffect(() => {
-      loadModel(onLoaded);
+      loadModel(() => {
+        setMaterialsLoaded(true);
+        onLoaded();
+      });
     }, [loadModel, onLoaded]);
 
-    if (!model) return null;
+    if (!model || !materialsLoaded) return null;
 
     const parts = [
       {
@@ -100,7 +105,7 @@ const Model = memo(
               <mesh
                 key={key}
                 ref={meshRef}
-                name={name}
+                name={key}
                 geometry={geometry}
                 position={position}
                 rotation={rotation || [0, 0, 0]}
