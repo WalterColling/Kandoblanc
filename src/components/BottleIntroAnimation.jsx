@@ -31,37 +31,40 @@ export function BottleIntro({ ...props }) {
       // All models and materials are loaded, set the context to hide the overlay
       setObjectLoaded(true);
 
-      // Start the initial animation
-      gsap.from([topRef.current.position], {
-        duration: 2.5,
-        y: 0.6,
-        ease: "power3.out",
-        delay: 0.2,
-      });
+      // Introduce a small delay before starting the initial animation
+      gsap.delayedCall(0.2, () => {
+        // Start the initial animation
+        gsap.from([topRef.current.position], {
+          duration: 2.5,
+          y: 0.6,
+          ease: "power3.out",
+          delay: 0.2,
+        });
 
-      gsap.from([neckRef.current.position], {
-        duration: 2.2,
-        y: 0.3,
-        ease: "power3.out",
-        delay: 0.2,
-      });
+        gsap.from([neckRef.current.position], {
+          duration: 2.2,
+          y: 0.3,
+          ease: "power3.out",
+          delay: 0.2,
+        });
 
-      gsap.from([obj.current.position], {
-        duration: 3,
-        x: -0.01,
-        y: 0.25,
-        z: 0.6,
-        ease: "power3.out",
-      });
+        gsap.from([obj.current.position], {
+          duration: 3,
+          x: -0.05,
+          y: 0.2,
+          z: 0.6,
+          ease: "power3.out",
+        });
 
-      gsap.from([obj.current.rotation], {
-        duration: 4.2,
-        y: -3,
-        ease: "power3.out",
-      });
+        gsap.from([obj.current.rotation], {
+          duration: 4.2,
+          y: -3,
+          ease: "power3.out",
+        });
 
-      // Trigger the second animation after the initial one is complete
-      setAnimationTriggered(true);
+        // Trigger the second animation after the initial one is complete
+        setAnimationTriggered(true);
+      });
     }
   }, [isModelLoaded, setObjectLoaded]);
 

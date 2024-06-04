@@ -1,10 +1,22 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import LoadingContext from "../LoadingContext";
 
 const Loading = () => {
   const { objectLoaded } = useContext(LoadingContext);
+  const [isVisible, setIsVisible] = useState(true);
 
-  if (objectLoaded) return null; // Hide the overlay when the object is loaded
+  useEffect(() => {
+    if (objectLoaded) {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+      }, 150); // Delay in milliseconds (200ms)
+
+      // Clear the timeout if the component unmounts or objectLoaded changes
+      return () => clearTimeout(timer);
+    }
+  }, [objectLoaded]);
+
+  if (!isVisible) return null; // Hide the overlay after the delay
   return (
     <div style={styles.container}>
       <p style={styles.text}>Loading..</p>
