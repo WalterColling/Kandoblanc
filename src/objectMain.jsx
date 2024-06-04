@@ -1,16 +1,19 @@
-import React, { Suspense } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import { Canvas } from "@react-three/fiber";
 import ObjectPage from "./ObjectPage";
+import Loading from "./components/html/Loading";
+import LoadingContext from "./components/LoadingContext";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <Canvas
-    gl={{ antialias: false }}
-    shadows
-    dpr={[2, 4]}
-    camera={{ position: [0, 0.2, 1.5], fov: 30, near: 0.1, far: 35 }}
-  >
-    <ObjectPage />
-  </Canvas>
-);
+const Root = () => {
+  const [objectLoaded, setObjectLoaded] = useState(false);
+
+  return (
+    <LoadingContext.Provider value={{ objectLoaded, setObjectLoaded }}>
+      <Loading />
+      <ObjectPage />;
+    </LoadingContext.Provider>
+  );
+};
+
+ReactDOM.createRoot(document.getElementById("root")).render(<Root />);

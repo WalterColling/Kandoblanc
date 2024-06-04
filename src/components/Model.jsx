@@ -119,6 +119,7 @@ const Model = memo(
               <mesh
                 key={key}
                 ref={meshRef}
+                name={name}
                 geometry={geometry}
                 position={position}
                 rotation={rotation || [0, 0, 0]}

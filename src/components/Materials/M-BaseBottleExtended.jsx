@@ -6,7 +6,7 @@ import { useDebounce } from "use-debounce";
 export function BaseBottleEx({ isBaseColor }) {
   const baseColorTexture = useLoader(
     TextureLoader,
-    "./Kandoblanc_V03_Mat_BaseColor.webp"
+    "./Kandoblanc_V03_Mat_BaseColor.jpg"
   );
   const baseColorBWTexture = useLoader(
     TextureLoader,

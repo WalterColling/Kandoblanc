@@ -19,7 +19,7 @@ const BottleScrollHTML = () => {
   useEffect(() => {
     const updateOpacity = () => {
       const scrollPosition = scroll.offset; // Get the normalized scroll position
-      console.log("Normalized Scroll Position:", scrollPosition);
+      // console.log("Normalized Scroll Position:", scrollPosition);
 
       scrollRanges.forEach((range, i) => {
         const { start, end } = range;

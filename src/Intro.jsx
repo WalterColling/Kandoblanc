@@ -11,15 +11,16 @@ import { OrbitControls } from "@react-three/drei";
 function Intro() {
   let colorbg = "#18181E";
 
-  const { setObjectLoaded } = useContext(LoadingContext);
+  // const { setObjectLoaded } = useContext(LoadingContext);
 
   return (
     <Canvas
+      gl={{ antialias: false }}
       shadows
       dpr={[2, 4]}
       camera={{ position: [0, 0.1, 1], fov: 25, near: 0.1, far: 35 }}
     >
-      <Perf position="top-left" />
+      {/* <Perf position="top-left" /> */}
 
       <Stage color={colorbg} />
 

@@ -1,7 +1,7 @@
 import React, { useRef, useMemo, useState, useEffect } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Vector3, MathUtils } from "three";
-import { useScroll } from "@react-three/drei";
+import { OrbitControls, useScroll } from "@react-three/drei";
 
 function CameraRigScroll() {
   const { camera } = useThree();

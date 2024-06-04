@@ -1,21 +1,21 @@
-import { useControls } from "leva";
-import Stage from "./components/Stage";
+import React, { useContext } from "react";
+import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Scroll, ScrollControls } from "@react-three/drei";
+import Stage from "./components/Stage";
 import CameraRigScroll from "./components/CameraRigScroll";
-import BottleScrollHTML from "./components/BottleScrollHTML";
+import BottleScrollHTML from "./components/html/BottleScrollHTML";
 import BottleScroll from "./components/BottleScroll";
 
 function ObjectPage() {
   let colorbg = "#18181E";
 
-  // Define leva controls for pages and damping // remove for final project
-  const { pages, damping } = useControls({
-    pages: { value: 6, min: 1, max: 20, step: 0.1 },
-    damping: { value: 0.3, min: 0, max: 1, step: 0.01 },
-  });
-
   return (
-    <>
+    <Canvas
+      gl={{ antialias: false }}
+      shadows
+      dpr={[2, 4]}
+      camera={{ position: [0, 0.2, 1.5], fov: 30, near: 0.1, far: 35 }}
+    >
       <Stage color={colorbg} />
       <OrbitControls
         makeDefault
@@ -29,14 +29,16 @@ function ObjectPage() {
         minPolarAngle={Math.PI / 2.2}
         target={[0, 0.17, 0]}
       />
-      <ScrollControls pages={pages} damping={damping}>
+      <ScrollControls pages={6} damping={0.3}>
         <Scroll html>
           <BottleScrollHTML />
         </Scroll>
+
         <BottleScroll />
+
         <CameraRigScroll />
       </ScrollControls>
-    </>
+    </Canvas>
   );
 }
 

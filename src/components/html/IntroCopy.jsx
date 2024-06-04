@@ -6,12 +6,14 @@ const IntroCopy = () => {
   const [showCopy, setShowCopy] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowCopy(false);
-    }, 5000);
+    if (objectLoaded) {
+      const timer = setTimeout(() => {
+        setShowCopy(false);
+      }, 4000);
 
-    return () => clearTimeout(timer);
-  }, []);
+      return () => clearTimeout(timer);
+    }
+  }, [objectLoaded]);
 
   if (!showCopy) return null;
 

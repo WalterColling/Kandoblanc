@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useRef, useState, useContext } from "react";
 import { Group, ObjectLoader } from "three";
-import { BaseTransmission } from "./Materials/M-BaseTransluscent";
-import { Liquid } from "./Materials/M-Liquid";
-import { BaseBottleEx } from "./Materials/M-BaseBottleExtended";
+import { BaseTransmission } from "../components/Materials/M-BaseTransluscent";
+import { Liquid } from "../components/Materials/M-Liquid";
+import { BaseBottleEx } from "../components/Materials/M-BaseBottleExtended";
 import Worker from "./dracoWorker?worker";
 
 const Model = memo(

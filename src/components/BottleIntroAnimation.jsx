@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import LoadingContext from "./LoadingContext";
-import Model from "./Model";
 
 export function BottleIntro({ ...props }) {
   const { setObjectLoaded } = useContext(LoadingContext);
@@ -14,12 +13,20 @@ export function BottleIntro({ ...props }) {
   const obj = useRef();
 
   const [isModelLoaded, setIsModelLoaded] = useState(false);
+  const [Model, setModel] = useState(null);
+  const [animationTriggered, setAnimationTriggered] = useState(false); // Local state to trigger animation
 
   const handleModelLoaded = () => {
     setIsModelLoaded(true);
   };
 
   useEffect(() => {
+    (async () => {
+      // Dynamically import the Model component
+      const modelModule = await import("./Model");
+      setModel(() => modelModule.default);
+    })();
+
     if (isModelLoaded) {
       // All models and materials are loaded, set the context to hide the overlay
       setObjectLoaded(true);
@@ -38,20 +45,29 @@ export function BottleIntro({ ...props }) {
         ease: "power3.out",
         delay: 0.2,
       });
+
       gsap.from([obj.current.position], {
         duration: 3,
+        x: -0.01,
         y: 0.25,
         z: 0.6,
         ease: "power3.out",
       });
+
       gsap.from([obj.current.rotation], {
         duration: 4.2,
         y: -3,
         ease: "power3.out",
       });
 
-      // Trigger the second animation after 4 seconds
-      gsap.delayedCall(3.5, () => {
+      // Trigger the second animation after the initial one is complete
+      setAnimationTriggered(true);
+    }
+  }, [isModelLoaded, setObjectLoaded]);
+
+  useEffect(() => {
+    if (animationTriggered) {
+      gsap.delayedCall(3, () => {
         gsap.to(obj.current.position, {
           duration: 2,
           y: obj.current.position.y + 0.05, // Adjust the y-axis value as needed
@@ -59,21 +75,25 @@ export function BottleIntro({ ...props }) {
         });
       });
     }
-  }, [isModelLoaded, setObjectLoaded]);
+  }, [animationTriggered]);
 
   return (
     <group ref={obj} {...props} dispose={null}>
-      <Model
-        refs={{
-          Bottle_Low: bottleRef,
-          Top: topRef,
-          Neck: neckRef,
-          Liquid: liquidRef,
-          Floor: floorRef,
-        }}
-        meshNames={["Bottle_Low", "Top", "Neck", "Liquid", "Floor"]}
-        onLoaded={handleModelLoaded} // Ensure model loaded callback is set
-      />
+      {Model && (
+        <Model
+          refs={{
+            Bottle_Low: bottleRef,
+            Top: topRef,
+            Neck: neckRef,
+            Liquid: liquidRef,
+            Floor: floorRef,
+          }}
+          meshNames={["Bottle_Low", "Top", "Neck", "Liquid", "Floor"]}
+          onLoaded={handleModelLoaded} // Ensure model loaded callback is set
+        />
+      )}
     </group>
   );
 }
+
+export default BottleIntro;

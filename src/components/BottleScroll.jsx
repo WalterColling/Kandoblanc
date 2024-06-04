@@ -4,16 +4,18 @@ import React, {
   useState,
   useMemo,
   useCallback,
+  useContext,
 } from "react";
 import { useScroll } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { Euler } from "three";
 import debounce from "lodash.debounce";
-import Model from "./Model";
 import { useLerpPosition } from "./useLerpPosition";
 import { useSmoothRotation } from "./useSmoothRotation";
+import LoadingContext from "./LoadingContext";
 
 export function BottleScroll(props) {
+  const { setObjectLoaded } = useContext(LoadingContext); // Access the context
   const scroll = useScroll();
 
   const LiquidRef = useRef();
@@ -124,17 +126,24 @@ export function BottleScroll(props) {
     const atLastIndexNow = scroll.offset >= 1.0;
     if (atLastIndexNow !== atLastIndex) {
       setAtLastIndex(atLastIndexNow);
+      if (atLastIndexNow) {
+        setHovered({
+          bottle: false,
+          top: false,
+          neck: false,
+        });
+      }
     }
 
-    updateBottleRotation(bottleRef, hovered.bottle || atLastIndex, delta);
-    updateTopRotation(topRef, hovered.top || atLastIndex, delta);
-    updateNeckRotation(neckRef, hovered.neck || atLastIndex, delta);
+    updateBottleRotation(bottleRef, hovered.bottle && !atLastIndexNow, delta);
+    updateTopRotation(topRef, hovered.top && !atLastIndexNow, delta);
+    updateNeckRotation(neckRef, hovered.neck && !atLastIndexNow, delta);
   });
 
   const debouncedSetHovered = useCallback(
     debounce((part, value) => {
       setHovered((prev) => ({ ...prev, [part]: value }));
-      console.log(`Hover state for ${part}:`, value);
+      // console.log(`Hover state for ${part}:`, value);
     }, 14),
     []
   );
@@ -143,7 +152,7 @@ export function BottleScroll(props) {
     (part) => (event) => {
       event.stopPropagation();
       debouncedSetHovered(part, true);
-      console.log(`Pointer over ${part}`);
+      // console.log(`Pointer over ${part}`);
     },
     [debouncedSetHovered]
   );
@@ -153,52 +162,70 @@ export function BottleScroll(props) {
       event.stopPropagation();
       setHovered((prev) => ({ ...prev, [part]: false }));
       debouncedSetHovered.cancel(); // Cancel any pending debounced calls
-      console.log(`Pointer out ${part}`);
+      // console.log(`Pointer out ${part}`);
     },
     [debouncedSetHovered]
   );
 
+  const handleModelLoaded = () => {
+    setIsModelLoaded(true);
+    setObjectLoaded(true); // Update the context
+  };
+
+  const [isModelLoaded, setIsModelLoaded] = useState(false);
+  const [Model, setModel] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      // Dynamically import the Model component
+      const modelModule = await import("./Model");
+      setModel(() => modelModule.default);
+    })();
+  }, []);
+
   return (
     <group ref={objRef} {...props} dispose={null}>
-      {/* Real geometry group */}
-      <Model
-        refs={{
-          Bottle_Low: bottleRef,
-          Top: topRef,
-          Neck: neckRef,
-          Liquid: LiquidRef,
-          Floor: FloorRef,
-          Bottle_Proxy: bottleProxyRef,
-          Top_Proxy: topProxyRef,
-          Neck_Proxy: neckProxyRef,
-        }}
-        hoverEffects={{
-          Bottle_Low: hovered.bottle || atLastIndex,
-          Top: hovered.top || atLastIndex,
-          Neck: hovered.neck || atLastIndex,
-        }}
-        meshNames={[
-          "Bottle_Low",
-          "Top",
-          "Neck",
-          "Liquid",
-          "Floor",
-          "Bottle_Proxy",
-          "Top_Proxy",
-          "Neck_Proxy",
-        ]}
-        onPointerOverHandlers={{
-          Bottle_Proxy: handlePointerOver("bottle"),
-          Top_Proxy: handlePointerOver("top"),
-          Neck_Proxy: handlePointerOver("neck"),
-        }}
-        onPointerOutHandlers={{
-          Bottle_Proxy: handlePointerOut("bottle"),
-          Top_Proxy: handlePointerOut("top"),
-          Neck_Proxy: handlePointerOut("neck"),
-        }}
-        {...props}
-      />
+      {Model && (
+        <Model
+          refs={{
+            Bottle_Low: bottleRef,
+            Top: topRef,
+            Neck: neckRef,
+            Liquid: LiquidRef,
+            Floor: FloorRef,
+            Bottle_Proxy: bottleProxyRef,
+            Top_Proxy: topProxyRef,
+            Neck_Proxy: neckProxyRef,
+          }}
+          hoverEffects={{
+            Bottle_Low: hovered.bottle && !atLastIndex,
+            Top: hovered.top && !atLastIndex,
+            Neck: hovered.neck && !atLastIndex,
+          }}
+          meshNames={[
+            "Bottle_Low",
+            "Top",
+            "Neck",
+            "Liquid",
+            "Floor",
+            "Bottle_Proxy",
+            "Top_Proxy",
+            "Neck_Proxy",
+          ]}
+          onLoaded={handleModelLoaded} // Ensure model loaded callback is set
+          onPointerOverHandlers={{
+            Bottle_Proxy: handlePointerOver("bottle"),
+            Top_Proxy: handlePointerOver("top"),
+            Neck_Proxy: handlePointerOver("neck"),
+          }}
+          onPointerOutHandlers={{
+            Bottle_Proxy: handlePointerOut("bottle"),
+            Top_Proxy: handlePointerOut("top"),
+            Neck_Proxy: handlePointerOut("neck"),
+          }}
+          {...props}
+        />
+      )}
     </group>
   );
 }
