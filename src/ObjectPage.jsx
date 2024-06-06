@@ -1,13 +1,17 @@
-import React, { useContext } from "react";
+import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, Scroll, ScrollControls } from "@react-three/drei";
+import { useControls } from "leva";
 import Stage from "./components/Stage";
 import CameraRigScroll from "./components/CameraRigScroll";
 import BottleScrollHTML from "./components/html/BottleScrollHTML";
 import BottleScroll from "./components/BottleScroll";
 
 function ObjectPage() {
-  let colorbg = "#18181E";
+  // Leva UI control for color
+  const { colorbg } = useControls({
+    colorbg: { value: "#18181E", label: "Background Color" },
+  });
 
   return (
     <Canvas

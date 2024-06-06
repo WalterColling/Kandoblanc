@@ -1,17 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Canvas } from "@react-three/fiber";
 import { Perf } from "r3f-perf";
-
+import { useControls } from "leva";
 import Stage from "./components/Stage";
-
-import LoadingContext from "./components/LoadingContext";
 import { BottleIntro } from "./components/BottleIntroAnimation";
 import { OrbitControls } from "@react-three/drei";
 
 function Intro() {
-  let colorbg = "#18181E";
-
-  // const { setObjectLoaded } = useContext(LoadingContext);
+  // Leva UI control for color
+  const { colorbg } = useControls({
+    colorbg: { value: "#18181E", label: "Background Color" },
+  });
 
   return (
     <Canvas
