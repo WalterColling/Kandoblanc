@@ -14,14 +14,15 @@ export function BaseTransmission({ isBaseColor }) {
         texture: texture01,
         thickness: 0.03,
         anisotropy: 5,
+
         backside: true,
       }
     : {
         color: "#808080",
         texture: texture02,
-        thickness: 0.01,
-        anisotropy: 0,
-        backside: true,
+        thickness: 0.03,
+        anisotropy: 5,
+        backside: false,
       };
 
   return (
@@ -33,7 +34,7 @@ export function BaseTransmission({ isBaseColor }) {
       backsideThickness={0.05}
       resolution={32}
       thickness={properties.thickness}
-      roughness={0.6}
+      roughness={0.4}
       envMapIntensity={0}
       color={properties.color}
     />
