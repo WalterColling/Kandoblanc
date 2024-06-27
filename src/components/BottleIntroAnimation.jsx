@@ -36,7 +36,7 @@ export function BottleIntro({ ...props }) {
         // Start the initial animation
         if (topRef.current) {
           gsap.from([topRef.current.position], {
-            duration: 2.5,
+            duration: 4.5,
             y: 0.6,
             ease: "power3.out",
             delay: 0.2,
@@ -45,7 +45,7 @@ export function BottleIntro({ ...props }) {
 
         if (neckRef.current) {
           gsap.from([neckRef.current.position], {
-            duration: 2.2,
+            duration: 4.2,
             y: 0.3,
             ease: "power3.out",
             delay: 0.2,
@@ -54,7 +54,7 @@ export function BottleIntro({ ...props }) {
 
         if (obj.current) {
           gsap.from([obj.current.position], {
-            duration: 3,
+            duration: 5,
             x: -0.05,
             y: 0.2,
             z: 0.6,
@@ -62,7 +62,7 @@ export function BottleIntro({ ...props }) {
           });
 
           gsap.from([obj.current.rotation], {
-            duration: 4.2,
+            duration: 5.2,
             y: -3,
             ease: "power3.out",
           });
@@ -76,7 +76,7 @@ export function BottleIntro({ ...props }) {
 
   useEffect(() => {
     if (animationTriggered) {
-      gsap.delayedCall(3, () => {
+      gsap.delayedCall(4.5, () => {
         if (obj.current) {
           gsap.to(obj.current.position, {
             duration: 2,

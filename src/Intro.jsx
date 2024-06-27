@@ -30,7 +30,7 @@ function Intro() {
         enableDamping={true}
         dampingFactor={0.05}
         autoRotate
-        autoRotateSpeed={0.5}
+        autoRotateSpeed={1.5}
         enablePan={false}
         enableZoom={false}
         maxPolarAngle={Math.PI / 2.2}

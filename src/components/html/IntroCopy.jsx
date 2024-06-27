@@ -1,17 +1,26 @@
 import React, { useContext, useEffect, useState } from "react";
 import LoadingContext from "../LoadingContext";
+import PlaceHolder from "/PlaceHolder.svg"; // Adjust the path as necessary
 
 const IntroCopy = () => {
   const { objectLoaded } = useContext(LoadingContext);
   const [showCopy, setShowCopy] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
     if (objectLoaded) {
-      const timer = setTimeout(() => {
-        setShowCopy(false);
-      }, 4000);
+      const fadeOutTimer = setTimeout(() => {
+        setFadeOut(true);
+      }, 4000); // Start fading out at 4000ms
 
-      return () => clearTimeout(timer);
+      const hideTimer = setTimeout(() => {
+        setShowCopy(false);
+      }, 5000); // Hide after 5000ms
+
+      return () => {
+        clearTimeout(fadeOutTimer);
+        clearTimeout(hideTimer);
+      };
     }
   }, [objectLoaded]);
 
@@ -19,7 +28,15 @@ const IntroCopy = () => {
 
   return (
     <div style={styles.container}>
-      <p style={styles.text}>Copy Goes here</p>
+      <img
+        src={PlaceHolder}
+        alt="Placeholder"
+        style={{
+          ...styles.image,
+          opacity: fadeOut ? 0 : 1,
+          transition: "opacity 1s ease-in-out", // Duration of 1000ms
+        }}
+      />
     </div>
   );
 };
@@ -34,12 +51,11 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(240, 240, 240, 0.5)", // 50% opacity
     zIndex: 10,
   },
-  text: {
-    fontSize: 24,
-    color: "#333",
+  image: {
+    width: "100%", // Adjust as necessary
+    height: "100%", // Adjust as necessary
   },
 };
 
