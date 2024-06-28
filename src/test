@@ -1,0 +1,98 @@
+import React, { useEffect, useRef, useState } from "react";
+import { Canvas } from "@react-three/fiber";
+import { useControls } from "leva";
+import Stage from "./components/Stage";
+import { BottleIntro } from "./components/BottleIntroAnimation";
+import { OrbitControls } from "@react-three/drei";
+
+function Intro() {
+  // Leva UI control for color
+  const { colorbg } = useControls({
+    colorbg: { value: "#18181E", label: "Background Color" },
+  });
+
+  const [isOrbitEnabled, setIsOrbitEnabled] = useState(true);
+  const startTouchRef = useRef(null);
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    startTouchRef.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const handleTouchMove = (e) => {
+    if (!startTouchRef.current) return;
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - startTouchRef.current.x;
+    const deltaY = touch.clientY - startTouchRef.current.y;
+
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      // Vertical swipe detected, disable OrbitControls
+      if (isOrbitEnabled) {
+        setIsOrbitEnabled(false);
+      }
+    } else {
+      // Horizontal swipe detected, prevent default behavior
+      if (!isOrbitEnabled) {
+        setIsOrbitEnabled(true);
+      }
+      e.preventDefault();
+    }
+  };
+
+  const handleTouchEnd = () => {
+    // Re-enable OrbitControls after touch ends
+    if (!isOrbitEnabled) {
+      setIsOrbitEnabled(true);
+    }
+    startTouchRef.current = null;
+  };
+
+  useEffect(() => {
+    const canvas = document.querySelector("canvas");
+
+    if (canvas) {
+      canvas.addEventListener("touchstart", handleTouchStart, {
+        passive: true,
+      });
+      canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+      canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+      return () => {
+        canvas.removeEventListener("touchstart", handleTouchStart);
+        canvas.removeEventListener("touchmove", handleTouchMove);
+        canvas.removeEventListener("touchend", handleTouchEnd);
+      };
+    }
+  }, [isOrbitEnabled]);
+
+  return (
+    <div id="canvas-container" style={{ height: "100vh" }}>
+      <Canvas
+        gl={{ antialias: false }}
+        shadows
+        dpr={[2, 4]}
+        camera={{ position: [0, 0.1, 1], fov: 25, near: 0.1, far: 35 }}
+      >
+        <Stage color={colorbg} />
+        <BottleIntro />
+        {isOrbitEnabled && (
+          <OrbitControls
+            makeDefault
+            enableDamping={true}
+            dampingFactor={0.05}
+            autoRotate
+            autoRotateSpeed={1.5}
+            enablePan={false}
+            enableZoom={false}
+            maxPolarAngle={Math.PI / 2.2}
+            minPolarAngle={Math.PI / 2.2}
+            target={[0, 0.17, 0]}
+          />
+        )}
+      </Canvas>
+    </div>
+  );
+}
+
+export default Intro;

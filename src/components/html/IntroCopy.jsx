@@ -1,42 +1,75 @@
 import React, { useContext, useEffect, useState } from "react";
 import LoadingContext from "../LoadingContext";
-import PlaceHolder from "/PlaceHolder.svg"; // Adjust the path as necessary
+import Lottie from "lottie-react";
 
 const IntroCopy = () => {
   const { objectLoaded } = useContext(LoadingContext);
   const [showCopy, setShowCopy] = useState(true);
-  const [fadeOut, setFadeOut] = useState(false);
+  const [animationPlaying, setAnimationPlaying] = useState(false);
+  const [animationData, setAnimationData] = useState(null);
+  const [backgroundOpacity, setBackgroundOpacity] = useState(80);
+  const [animationOpacity, setAnimationOpacity] = useState(1);
 
   useEffect(() => {
-    if (objectLoaded) {
-      const fadeOutTimer = setTimeout(() => {
-        setFadeOut(true);
-      }, 4000); // Start fading out at 4000ms
+    // Fetch the animation data from the provided link
+    fetch(
+      "https://lottie.host/81dee815-db95-4237-92ef-ecb411fa87ca/ceTkbrqRS7.json"
+    )
+      .then((response) => response.json())
+      .then((data) => setAnimationData(data))
+      .catch((error) => console.error("Error loading animation data:", error));
+  }, []);
 
-      const hideTimer = setTimeout(() => {
+  useEffect(() => {
+    if (objectLoaded && animationData) {
+      setAnimationPlaying(true);
+
+      // Hide the copy and animation after specific times
+      const hideCopyTimer = setTimeout(() => {
         setShowCopy(false);
-      }, 5000); // Hide after 5000ms
+      }, 5000);
+
+      const fadeAnimationTimer = setTimeout(() => {
+        setAnimationOpacity(0);
+      }, 4000);
+
+      // Trigger the opacity transition after 1500ms
+      const opacityTimer = setTimeout(() => {
+        setBackgroundOpacity(0);
+      }, 3000);
 
       return () => {
-        clearTimeout(fadeOutTimer);
-        clearTimeout(hideTimer);
+        clearTimeout(hideCopyTimer);
+        clearTimeout(fadeAnimationTimer);
+        clearTimeout(opacityTimer);
       };
     }
-  }, [objectLoaded]);
+  }, [objectLoaded, animationData]);
 
-  if (!showCopy) return null;
+  if (!showCopy || !animationData) return null;
+
+  const animationStyle = {
+    width: "80vw",
+    height: "auto",
+    maxWidth: "100%",
+    maxHeight: "100%",
+    opacity: animationOpacity,
+    transition: "opacity 1000ms",
+  };
 
   return (
-    <div style={styles.container}>
-      <img
-        src={PlaceHolder}
-        alt="Placeholder"
-        style={{
-          ...styles.image,
-          opacity: fadeOut ? 0 : 1,
-          transition: "opacity 1s ease-in-out", // Duration of 1000ms
-        }}
-      />
+    <div
+      style={{
+        ...styles.container,
+        backgroundColor: `rgba(24, 24, 30, ${backgroundOpacity / 100})`,
+        transition: "background-color 3000ms",
+      }}
+    >
+      {animationPlaying && (
+        <div style={animationStyle}>
+          <Lottie animationData={animationData} loop={false} />
+        </div>
+      )}
     </div>
   );
 };
@@ -51,11 +84,8 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "rgba(24, 24, 30, 0.8)", // Start with 80% opacity
     zIndex: 10,
-  },
-  image: {
-    width: "100%", // Adjust as necessary
-    height: "100%", // Adjust as necessary
   },
 };
 

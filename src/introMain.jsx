@@ -5,6 +5,8 @@ import Intro from "./Intro";
 import Loading from "./components/html/Loading";
 import LoadingContext from "./components/LoadingContext";
 import IntroCopy from "./components/html/IntroCopy";
+import SimpleComponent from "./components/simpleComponent";
+import IntroCopy2 from "./components/html/IntroCopy2";
 
 const Root = () => {
   const [objectLoaded, setObjectLoaded] = useState(false);
@@ -14,6 +16,7 @@ const Root = () => {
       <IntroCopy />
       <Loading />
       <Intro />
+      <SimpleComponent />
     </LoadingContext.Provider>
   );
 };

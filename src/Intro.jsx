@@ -22,7 +22,6 @@ function Intro() {
       {/* <Perf position="top-left" /> */}
 
       <Stage color={colorbg} />
-
       <BottleIntro />
 
       <OrbitControls
