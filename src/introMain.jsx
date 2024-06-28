@@ -5,18 +5,18 @@ import Intro from "./Intro";
 import Loading from "./components/html/Loading";
 import LoadingContext from "./components/LoadingContext";
 import IntroCopy from "./components/html/IntroCopy";
-import SimpleComponent from "./components/simpleComponent";
-import IntroCopy2 from "./components/html/IntroCopy2";
+
+import MobileScroll from "./components/html/MobileScroll";
 
 const Root = () => {
   const [objectLoaded, setObjectLoaded] = useState(false);
 
   return (
     <LoadingContext.Provider value={{ objectLoaded, setObjectLoaded }}>
+      <MobileScroll />
       <IntroCopy />
       <Loading />
       <Intro />
-      <SimpleComponent />
     </LoadingContext.Provider>
   );
 };

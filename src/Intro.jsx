@@ -7,10 +7,10 @@ import { BottleIntro } from "./components/BottleIntroAnimation";
 import { OrbitControls } from "@react-three/drei";
 
 function Intro() {
-  // Leva UI control for color
-  const { colorbg } = useControls({
-    colorbg: { value: "#18181E", label: "Background Color" },
-  });
+  // // Leva UI control for color
+  // const { colorbg } = useControls({
+  //   colorbg: { value: "#18181E", label: "Background Color" },
+  // });
 
   return (
     <Canvas
@@ -21,7 +21,7 @@ function Intro() {
     >
       {/* <Perf position="top-left" /> */}
 
-      <Stage color={colorbg} />
+      <Stage color={"#18181E"} />
       <BottleIntro />
 
       <OrbitControls
