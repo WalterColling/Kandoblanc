@@ -11,9 +11,9 @@ const IntroCopy = () => {
   const [animationOpacity, setAnimationOpacity] = useState(1);
 
   useEffect(() => {
-    // Fetch the animation data from the provided link
+    // Fetch lottie from the provided link
     fetch(
-      "https://lottie.host/81dee815-db95-4237-92ef-ecb411fa87ca/ceTkbrqRS7.json"
+      "https://lottie.host/e079c7df-2fd4-4804-a9fe-7380893bec19/336T2xE07q.json"
     )
       .then((response) => response.json())
       .then((data) => setAnimationData(data))
@@ -21,27 +21,35 @@ const IntroCopy = () => {
   }, []);
 
   useEffect(() => {
+    // only trigger animation after the object is loaded
     if (objectLoaded && animationData) {
-      setAnimationPlaying(true);
+      const animationStartTimer = setTimeout(() => {
+        setAnimationPlaying(true);
 
-      // Hide the copy and animation after specific times
-      const hideCopyTimer = setTimeout(() => {
-        setShowCopy(false);
-      }, 5000);
+        // Deactivates the component - it should be the total animation time
+        const hideCopyTimer = setTimeout(() => {
+          setShowCopy(false);
+        }, 6000);
 
-      const fadeAnimationTimer = setTimeout(() => {
-        setAnimationOpacity(0);
-      }, 4000);
+        //trigger lootie fade out
+        const fadeAnimationTimer = setTimeout(() => {
+          setAnimationOpacity(0);
+        }, 5000);
 
-      // Trigger the opacity transition after 1500ms
-      const opacityTimer = setTimeout(() => {
-        setBackgroundOpacity(0);
-      }, 3000);
+        // Trigger the opacity fade out
+        const opacityTimer = setTimeout(() => {
+          setBackgroundOpacity(0);
+        }, 4000);
+
+        return () => {
+          clearTimeout(hideCopyTimer);
+          clearTimeout(fadeAnimationTimer);
+          clearTimeout(opacityTimer);
+        };
+      }, 1000); // Delay of 2000ms before starting the animation
 
       return () => {
-        clearTimeout(hideCopyTimer);
-        clearTimeout(fadeAnimationTimer);
-        clearTimeout(opacityTimer);
+        clearTimeout(animationStartTimer);
       };
     }
   }, [objectLoaded, animationData]);
@@ -54,7 +62,7 @@ const IntroCopy = () => {
     maxWidth: "100%",
     maxHeight: "100%",
     opacity: animationOpacity,
-    transition: "opacity 1000ms",
+    transition: "opacity 1000ms", // lottie transition length
   };
 
   return (
@@ -62,7 +70,7 @@ const IntroCopy = () => {
       style={{
         ...styles.container,
         backgroundColor: `rgba(24, 24, 30, ${backgroundOpacity / 100})`,
-        transition: "background-color 3000ms",
+        transition: "background-color 3000ms", // background transition length
       }}
     >
       {animationPlaying && (
@@ -84,7 +92,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(24, 24, 30, 0.8)", // Start with 80% opacity
+    backgroundColor: "rgba(24, 24, 30, 0.8)",
     zIndex: 10,
   },
 };
