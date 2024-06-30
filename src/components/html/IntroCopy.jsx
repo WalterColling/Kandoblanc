@@ -87,7 +87,6 @@ const IntroCopy = () => {
           <Lottie animationData={animationData} loop={false} />
         </div>
       )}
-      {/* Add any other content here */}
     </div>
   );
 };
