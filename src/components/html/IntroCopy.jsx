@@ -2,6 +2,13 @@ import React, { useContext, useEffect, useState } from "react";
 import LoadingContext from "../LoadingContext";
 import Lottie from "lottie-react";
 
+const isMobileDevice = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  return /android|iphone|ipad|ipod|windows phone|iemobile|wpdesktop/i.test(
+    userAgent
+  );
+};
+
 const IntroCopy = () => {
   const { objectLoaded } = useContext(LoadingContext);
   const [showCopy, setShowCopy] = useState(true);
@@ -9,6 +16,8 @@ const IntroCopy = () => {
   const [animationData, setAnimationData] = useState(null);
   const [backgroundOpacity, setBackgroundOpacity] = useState(80);
   const [animationOpacity, setAnimationOpacity] = useState(1);
+  const [showAnimation, setShowAnimation] = useState(false); // Lottie on / off
+  const isMobile = isMobileDevice(); // Use the function to detect mobile devices
 
   useEffect(() => {
     // Fetch lottie from the provided link
@@ -46,7 +55,7 @@ const IntroCopy = () => {
           clearTimeout(fadeAnimationTimer);
           clearTimeout(opacityTimer);
         };
-      }, 1000); // Delay of 2000ms before starting the animation
+      }, 1000); // Delay the start of the animation
 
       return () => {
         clearTimeout(animationStartTimer);
@@ -54,10 +63,10 @@ const IntroCopy = () => {
     }
   }, [objectLoaded, animationData]);
 
-  if (!showCopy || !animationData) return null;
+  if (!showCopy) return null;
 
   const animationStyle = {
-    width: "80vw",
+    width: isMobile ? "60vw" : "80vw", // Adjust size for mobile devices and desktop (mobile:desktop)
     height: "auto",
     maxWidth: "100%",
     maxHeight: "100%",
@@ -73,11 +82,12 @@ const IntroCopy = () => {
         transition: "background-color 3000ms", // background transition length
       }}
     >
-      {animationPlaying && (
+      {animationPlaying && showAnimation && (
         <div style={animationStyle}>
           <Lottie animationData={animationData} loop={false} />
         </div>
       )}
+      {/* Add any other content here */}
     </div>
   );
 };

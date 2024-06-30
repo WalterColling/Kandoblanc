@@ -17,7 +17,7 @@ function Intro() {
       gl={{ antialias: false }}
       shadows
       dpr={[2, 4]}
-      camera={{ position: [0, 0.1, 1], fov: 25, near: 0.1, far: 35 }}
+      camera={{ position: [0, 0.1, 1.15], fov: 25, near: 0.1, far: 35 }}
     >
       {/* <Perf position="top-left" /> */}
 
@@ -34,10 +34,12 @@ function Intro() {
         enableZoom={false}
         maxPolarAngle={Math.PI / 2.2}
         minPolarAngle={Math.PI / 2.2}
-        target={[0, 0.17, 0]}
+        target={[0, 0.2, 0]}
       />
     </Canvas>
   );
 }
 
 export default Intro;
+
+//working on the intro page
