@@ -1,30 +1,42 @@
 import { create } from "zustand";
-import { ObjectLoader } from "three";
-import Worker from "./dracoWorker?worker";
+import { ObjectLoader, Group } from "three";
+import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath(
+  "https://www.gstatic.com/draco/versioned/decoders/1.4.0/"
+);
+
+const gltfLoader = new GLTFLoader();
+gltfLoader.setDRACOLoader(dracoLoader);
 
 const useStore = create((set) => ({
   model: null,
   textures: {},
   loadModel: async (onLoaded) => {
-    const worker = new Worker();
+    try {
+      console.log("Loading model...");
+      const gltf = await new Promise((resolve, reject) => {
+        gltfLoader.load(
+          "/Kandoblanc-Models04_draco.glb",
+          resolve,
+          undefined,
+          reject
+        );
+      });
 
-    worker.onmessage = (event) => {
-      const { type, scene, error } = event.data;
-      if (type === "load") {
-        const loader = new ObjectLoader();
-        const loadedScene = loader.parse(scene);
-        set({ model: loadedScene });
-        if (onLoaded) onLoaded();
-      } else if (type === "error") {
-        console.error("Error loading model:", error);
-      }
-    };
+      const scene = new Group();
+      scene.add(gltf.scene);
 
-    worker.postMessage({ url: "/Kandoblanc-Models04_draco.glb" });
+      // Directly set the loaded scene in the Zustand store
+      set({ model: scene });
 
-    return () => {
-      worker.terminate();
-    };
+      if (onLoaded) onLoaded();
+      // console.log("Model loaded successfully.");
+    } catch (error) {
+      console.error("Error loading model:", error);
+    }
   },
 }));
 
