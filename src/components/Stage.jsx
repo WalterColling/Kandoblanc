@@ -12,9 +12,10 @@ function Stage({ color }) {
 
       <group ref={groupRef}>
         <Environment
-          preset="studio"
+          files={"/HDRI_Kandoblanc_V04.hdr"}
           background={false}
           environmentRotation={[0, Math.PI / 2, 0]}
+          intensity={20}
         />
       </group>
       <ambientLight intensity={2} />
