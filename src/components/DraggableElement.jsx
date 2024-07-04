@@ -12,7 +12,7 @@ function DraggableElement({ children, draggable = true }) {
   const [{ rotation }, api] = useSpring(() => ({ rotation: [0, 0, 0] }));
 
   const debouncedSetTargetRotation = useCallback(
-    debounce(setTargetRotation, 3),
+    debounce(setTargetRotation, 0.1),
     []
   );
 
