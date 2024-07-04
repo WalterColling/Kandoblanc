@@ -14,7 +14,7 @@ function DraggableElement({ children, draggable = true }) {
   const [startRotation, setStartRotation] = useState(false);
 
   const debouncedSetTargetRotation = useCallback(
-    debounce(setTargetRotation, 0.1),
+    debounce((value) => setTargetRotation(value), 100),
     []
   );
 
@@ -27,23 +27,39 @@ function DraggableElement({ children, draggable = true }) {
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         userAgent
       );
+    // console.log("isMobile: ", isMobile.current); // Debugging mobile detection
   }, []);
 
+  const setRotation = (newRot) => {
+    if (isMobile.current) {
+      setTargetRotation(newRot);
+    } else {
+      debouncedSetTargetRotation(newRot);
+    }
+  };
+
   const bind = useDrag(
-    ({ movement: [mx], velocity, down }) => {
+    ({ event, movement: [mx], velocity, down }) => {
       if (!draggable) return;
 
+      // console.log("Event type: ", event.type); // Log event type to check for touch
+      if (event.type.startsWith("touch")) {
+        console.log("Touch event detected");
+      }
+
+      // console.log("Drag event detected: ", { mx, velocity, down }); // Debugging drag event
+
       const speed = down ? velocity : 0;
-      const sensitivity = isMobile.current ? 50 : 1; // Increase sensitivity for mobile
+      const sensitivity = isMobile.current ? 5 : 1; // Increase sensitivity for mobile
       let newRot =
         targetRotation +
         (mx / gl.domElement.clientWidth) * 2 * Math.PI * sensitivity;
       newRot =
         targetRotation +
-        Math.min(Math.abs(newRot - targetRotation), 0.1) *
+        Math.min(Math.abs(newRot - targetRotation), 2) *
           Math.sign(newRot - targetRotation);
 
-      debouncedSetTargetRotation(newRot);
+      setRotation(newRot);
 
       api.start({
         rotation: [0, newRot, 0],
@@ -71,13 +87,13 @@ function DraggableElement({ children, draggable = true }) {
 
   useFrame(() => {
     if (ref.current && startRotation) {
-      setConstantRotation((prev) => prev + 0.002);
+      setConstantRotation((prev) => prev + 0.001);
       ref.current.rotation.y = rotation.get()[1] + constantRotation;
     }
   }, [rotation, constantRotation, startRotation]);
 
   return (
-    <a.mesh ref={ref} rotation={rotation} {...bind}>
+    <a.mesh ref={ref} rotation={rotation}>
       {children}
     </a.mesh>
   );

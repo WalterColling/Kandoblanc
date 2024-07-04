@@ -13,7 +13,7 @@ const Root = () => {
 
   return (
     <LoadingContext.Provider value={{ objectLoaded, setObjectLoaded }}>
-      <MobileScroll />
+      {/* <MobileScroll /> */}
       <IntroCopy />
       <Loading />
       <Intro />
