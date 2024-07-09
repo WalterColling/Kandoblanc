@@ -21,7 +21,7 @@ function Intro() {
       dpr={[2, 4]}
       camera={{ position: [0, 0.1, 1.15], fov: 25, near: 0.1, far: 35 }}
     >
-      <Perf position="top-left" />
+      {/* <Perf position="top-left" /> */}
 
       <Stage color={"#18181E"} />
       <CameraRig />

@@ -19,6 +19,7 @@ function DraggableElement({ children, draggable = true }) {
   );
 
   const isMobile = useRef(false);
+  const isIOS = useRef(false);
 
   useEffect(() => {
     const userAgent =
@@ -27,7 +28,9 @@ function DraggableElement({ children, draggable = true }) {
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         userAgent
       );
+    isIOS.current = /iPhone|iPad|iPod/i.test(userAgent);
     // console.log("isMobile: ", isMobile.current); // Debugging mobile detection
+    // console.log("isIOS: ", isIOS.current); // Debugging iOS detection
   }, []);
 
   const setRotation = (newRot) => {
@@ -44,13 +47,13 @@ function DraggableElement({ children, draggable = true }) {
 
       // console.log("Event type: ", event.type); // Log event type to check for touch
       if (event.type.startsWith("touch")) {
-        console.log("Touch event detected");
+        // console.log("Touch event detected");
       }
 
       // console.log("Drag event detected: ", { mx, velocity, down }); // Debugging drag event
 
       const speed = down ? velocity : 0;
-      const sensitivity = isMobile.current ? 5 : 1; // Increase sensitivity for mobile
+      const sensitivity = isMobile.current ? (isIOS.current ? 0.1 : 25) : 1; // Adjust sensitivity for iOS specifically
       let newRot =
         targetRotation +
         (mx / gl.domElement.clientWidth) * 2 * Math.PI * sensitivity;

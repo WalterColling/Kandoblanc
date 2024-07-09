@@ -4,6 +4,7 @@ import "./index.css";
 import ObjectPage from "./ObjectPage";
 import Loading from "./components/html/Loading";
 import LoadingContext from "./components/LoadingContext";
+import ScrollTestComponent from "./components/ScrollTestComponent";
 
 const Root = () => {
   const [objectLoaded, setObjectLoaded] = useState(false);
@@ -11,7 +12,7 @@ const Root = () => {
   return (
     <LoadingContext.Provider value={{ objectLoaded, setObjectLoaded }}>
       <Loading />
-      <ObjectPage />;
+      <ObjectPage />
     </LoadingContext.Provider>
   );
 };

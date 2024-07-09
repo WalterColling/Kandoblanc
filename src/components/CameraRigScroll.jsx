@@ -16,7 +16,7 @@ function CameraRigScroll() {
   const updatePositions = () => {
     const zPos = calculateZPosition();
     setPositions([
-      { position: [0, 0.2, zPos], fov: 35, lookAt: [0, 0.35, 0] },
+      { position: [0, 0.2, zPos - 0.1], fov: 35, lookAt: [0, 0.28, 0] },
       { position: [0, 0.2, zPos], fov: 35, lookAt: [0, 0.24, 0] },
       { position: [0, 0.25, zPos + 0.1], fov: 35, lookAt: [0, 0.08, 0] },
       { position: [0, 0.25, zPos], fov: 35, lookAt: [0, 0.08, 0] },
