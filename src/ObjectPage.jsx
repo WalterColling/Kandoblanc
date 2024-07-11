@@ -6,6 +6,7 @@ import Stage from "./components/Stage";
 import CameraRigScroll from "./components/CameraRigScroll";
 import BottleScrollHTML from "./components/html/BottleScrollHTML";
 import BottleScroll from "./components/BottleScroll";
+import ConstantRotation from "./components/ConstantRotation";
 
 function ObjectPage() {
   // Leva UI control for color
@@ -26,8 +27,9 @@ function ObjectPage() {
         <Scroll html>
           <BottleScrollHTML />
         </Scroll>
-
-        <BottleScroll />
+        <ConstantRotation>
+          <BottleScroll />
+        </ConstantRotation>
 
         <CameraRigScroll />
       </ScrollControls>

@@ -123,7 +123,7 @@ export function BottleScroll(props) {
       neckProxyRef.current.position.copy(neckRef.current.position);
     }
 
-    const atLastIndexNow = scroll.offset >= 1.0;
+    const atLastIndexNow = scroll.offset >= 0.99;
     if (atLastIndexNow !== atLastIndex) {
       setAtLastIndex(atLastIndexNow);
       if (atLastIndexNow) {
