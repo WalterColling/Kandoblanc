@@ -7,11 +7,10 @@ const BottleScrollHTML = () => {
 
   // Define normalized scroll ranges for each section
   const scrollRanges = [
-    { start: 0, end: 0.05 }, // Section 1
-    { start: 0.08, end: 0.18 }, // Section 2
-    { start: 0.22, end: 0.37 }, // Section 3
-    { start: 0.47, end: 0.63 }, // Section 4
-    { start: 0.7, end: 0.86 }, // Section 5
+    { start: 0, end: 0 }, // Section 1
+    { start: 0.25, end: 0.41 }, // Section 1
+    { start: 0.44, end: 0.62 }, // Section 2
+    { start: 0.67, end: 0.85 }, // Section 3
   ];
 
   let lastScrollPosition = 0;
@@ -19,7 +18,7 @@ const BottleScrollHTML = () => {
   useEffect(() => {
     const updateOpacity = () => {
       const scrollPosition = scroll.offset; // Get the normalized scroll position
-      // console.log("Normalized Scroll Position:", scrollPosition);
+      console.log("Normalized Scroll Position:", scrollPosition);
 
       scrollRanges.forEach((range, i) => {
         const { start, end } = range;
@@ -47,42 +46,66 @@ const BottleScrollHTML = () => {
     <>
       <div
         id="section-1"
-        style={{ height: "100vh", position: "relative", opacity: 1 }}
+        style={{
+          height: "190vh",
+          position: "relative",
+        }}
       >
-        <h1 style={{ position: "absolute", top: "40%", left: "0.5em" }}>
-          Section 1
-        </h1>
+        <h1 style={{ position: "absolute", top: "40%", left: "0.5em" }}></h1>
       </div>
       <div
         id="section-2"
-        style={{ height: "80vh", position: "relative", opacity: 1 }}
+        style={{
+          color: "white",
+          height: "100vh",
+          position: "relative",
+          opacity: 1,
+        }}
       >
-        <h1 style={{ position: "absolute", top: "20%", left: "0.5em" }}>
-          Section 2
+        <h1
+          style={{
+            color: "white",
+            position: "absolute",
+            top: "20%",
+            left: "0.5em",
+          }}
+        >
+          Bottle Body
         </h1>
       </div>
       <div
         id="section-3"
-        style={{ height: "100vh", position: "relative", opacity: 1 }}
+        style={{
+          color: "white",
+          height: "120vh",
+          position: "relative",
+          opacity: 1,
+        }}
       >
-        <h1 style={{ position: "absolute", top: "20%", left: "0.5em" }}>
-          Section 3
+        <h1
+          style={{
+            color: "white",
+            position: "absolute",
+            top: "20%",
+            left: "0.5em",
+          }}
+        >
+          Bottle Neck
         </h1>
       </div>
       <div
         id="section-4"
-        style={{ height: "150vh", position: "relative", opacity: 1 }}
-      >
-        <h1 style={{ position: "absolute", top: "20%", left: "0.5em" }}>
-          Section 4
-        </h1>
-      </div>
-      <div
-        id="section-5"
         style={{ height: "100vh", position: "relative", opacity: 1 }}
       >
-        <h1 style={{ position: "absolute", top: "20%", left: "0.5em" }}>
-          Section 5
+        <h1
+          style={{
+            color: "white",
+            position: "absolute",
+            top: "20%",
+            left: "0.5em",
+          }}
+        >
+          Bottle Lid
         </h1>
       </div>
     </>
