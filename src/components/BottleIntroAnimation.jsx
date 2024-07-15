@@ -33,6 +33,9 @@ export function BottleIntro({ ...props }) {
       // Introduce a small delay before setting the context to hide the overlay
       gsap.delayedCall(0.0, () => {
         // Adjust the delay time as needed
+        if (obj.current) {
+          obj.current.position.y = 0.05; // Set new initial y position
+        }
         setObjectLoaded(true);
 
         // Introduce a small delay before starting the initial animation
@@ -57,13 +60,13 @@ export function BottleIntro({ ...props }) {
           }
 
           if (obj.current) {
-            gsap.from([obj.current.position], {
-              duration: 5,
-              x: -0.05,
-              y: 0.2,
-              z: 0.6,
-              ease: "power3.out",
-            });
+            // gsap.from([obj.current.position], {
+            //   duration: 5,
+            //   x: -0.05,
+            //   y: 0.2,
+            //   z: 0.6,
+            //   ease: "power3.out",
+            // });
 
             gsap.from([obj.current.rotation], {
               duration: 5.2,
@@ -79,19 +82,19 @@ export function BottleIntro({ ...props }) {
     }
   }, [isModelLoaded, setObjectLoaded]);
 
-  useEffect(() => {
-    if (animationTriggered) {
-      gsap.delayedCall(4.5, () => {
-        if (obj.current) {
-          gsap.to(obj.current.position, {
-            duration: 2,
-            y: obj.current.position.y + 0.05, // Adjust the y-axis value as needed
-            ease: "power3.out",
-          });
-        }
-      });
-    }
-  }, [animationTriggered]);
+  // useEffect(() => {
+  //   if (animationTriggered) {
+  //     gsap.delayedCall(4.5, () => {
+  //       if (obj.current) {
+  //         gsap.to(obj.current.position, {
+  //           duration: 2,
+  //           y: obj.current.position.y + 0.05, // Adjust the y-axis value as needed
+  //           ease: "power3.out",
+  //         });
+  //       }
+  //     });
+  //   }
+  // }, [animationTriggered]);
 
   return (
     <group ref={obj} {...props} dispose={null}>
