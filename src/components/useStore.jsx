@@ -16,7 +16,7 @@ const useStore = create((set) => ({
   textures: {},
   loadModel: async (onLoaded) => {
     try {
-      console.log("Loading model...");
+      // console.log("Loading model...");
       const gltf = await new Promise((resolve, reject) => {
         gltfLoader.load(
           "/Kandoblanc-Models04_draco.glb",

@@ -19,7 +19,7 @@ function Intro() {
       gl={{ antialias: false }}
       shadows
       dpr={[2, 4]}
-      camera={{ position: [0, 0.1, 0.8], fov: 30, near: 0.1, far: 35 }}
+      camera={{ position: [0, 0.1, 0.8], fov: 25, near: 0.1, far: 35 }}
     >
       {/* <Perf position="top-left" /> */}
 
