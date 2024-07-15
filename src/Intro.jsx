@@ -19,12 +19,15 @@ function Intro() {
       gl={{ antialias: false }}
       shadows
       dpr={[2, 4]}
-      camera={{ position: [0, 0.1, 0.8], fov: 25, near: 0.1, far: 35 }}
+      camera={{ position: [0, 0.3, 1.2], fov: 25, near: 0.1, far: 35 }}
+      onCreated={({ camera }) => {
+        camera.lookAt(0, 0.2, 0); // Set the target position here
+      }}
     >
       {/* <Perf position="top-left" /> */}
 
       <Stage color={"#18181E"} />
-      <CameraRig />
+      {/* <CameraRig /> */}
       <DraggableElement>
         <BottleIntro />
       </DraggableElement>

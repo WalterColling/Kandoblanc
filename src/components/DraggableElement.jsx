@@ -83,7 +83,7 @@ function DraggableElement({ children, draggable = true }) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setStartRotation(true);
-    }, 5000); // 5-second delay
+    }, 0); // 5-second delay
 
     return () => clearTimeout(timer);
   }, []);
