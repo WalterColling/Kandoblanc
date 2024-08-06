@@ -12,9 +12,9 @@ const BottleScrollHTML = () => {
   // Define normalized scroll ranges for each section
   const scrollRanges = [
     { start: 0, end: 0 }, // Section 1
-    { start: 0.25, end: 0.41 }, // Section 1
-    { start: 0.44, end: 0.62 }, // Section 2
-    { start: 0.67, end: 0.85 }, // Section 3
+    { start: 0.15, end: 0.31 }, // Section 1
+    { start: 0.4, end: 0.5 }, // Section 2
+    { start: 0.67, end: 0.9 }, // Section 3
   ];
 
   useEffect(() => {
@@ -135,7 +135,7 @@ const BottleScrollHTML = () => {
       <div
         id="section-1"
         style={{
-          height: "190vh",
+          height: "100vh",
           width: "100vw",
           position: "relative",
         }}
@@ -157,7 +157,7 @@ const BottleScrollHTML = () => {
           style={{
             color: "black",
             position: "absolute",
-            top: "20%",
+            top: "50%",
             left: leftPosition,
           }}
           onClick={handleSection2ButtonClick}
@@ -168,7 +168,7 @@ const BottleScrollHTML = () => {
           style={{
             color: "white",
             position: "absolute",
-            top: "20%",
+            top: "50%",
             left: leftPosition,
           }}
         >
@@ -214,7 +214,7 @@ const BottleScrollHTML = () => {
           style={{
             color: "black",
             position: "absolute",
-            top: "20%",
+            top: "10%",
             left: leftPosition,
           }}
           onClick={handleSection4ButtonClick}
@@ -225,7 +225,7 @@ const BottleScrollHTML = () => {
           style={{
             color: "white",
             position: "absolute",
-            top: "20%",
+            top: "10%",
             left: leftPosition,
           }}
         >

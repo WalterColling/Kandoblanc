@@ -23,7 +23,7 @@ function ObjectPage() {
     >
       <Stage color={"#18181E"} />
 
-      <ScrollControls pages={6} damping={0.3}>
+      <ScrollControls pages={5} damping={0.3}>
         <Scroll html>
           <BottleScrollHTML />
         </Scroll>
