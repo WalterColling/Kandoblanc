@@ -113,7 +113,7 @@ const Model = memo(
                 onPointerOut={onPointerOut}
                 visible={!isProxy} // Set visibility to false for proxy meshes
               >
-                <MaterialComponent isBaseColor={hoverEffect} />
+                <MaterialComponent isBaseColor={false} />
               </mesh>
             );
           })}
