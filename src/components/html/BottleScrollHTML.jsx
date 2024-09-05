@@ -20,7 +20,14 @@ const BottleScrollHTML = () => {
   useEffect(() => {
     const updateOpacity = () => {
       const scrollPosition = scroll.offset; // Get the normalized scroll position
-      console.log("Normalized Scroll Position:", scrollPosition);
+      // console.log("Normalized Scroll Position:", scrollPosition);
+
+      // Post the scrollPosition to the parent window
+      window.parent.postMessage({ type: "iframe-scroll", scrollPosition }, "*");
+      console.log("Message sent to parent:", {
+        type: "iframe-scroll",
+        scrollPosition,
+      });
 
       scrollRanges.forEach((range, i) => {
         const { start, end } = range;
