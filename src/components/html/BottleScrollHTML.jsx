@@ -8,6 +8,8 @@ const BottleScrollHTML = () => {
   const [isSection3H1Visible, setSection3H1Visible] = useState(true);
   const [isSection4H1Visible, setSection4H1Visible] = useState(true);
   const [leftPosition, setLeftPosition] = useState("20vw");
+  const [hasScrolled, setHasScrolled] = useState(false); // Track scroll start
+  const [hasReachedEnd, setHasReachedEnd] = useState(false); // Track scroll end
 
   // Define normalized scroll ranges for each section
   const scrollRanges = [
@@ -18,16 +20,23 @@ const BottleScrollHTML = () => {
   ];
 
   useEffect(() => {
-    const updateOpacity = () => {
+    const updateScrollState = () => {
       const scrollPosition = scroll.offset; // Get the normalized scroll position
-      // console.log("Normalized Scroll Position:", scrollPosition);
 
-      // Post the scrollPosition to the parent window
-      window.parent.postMessage({ type: "iframe-scroll", scrollPosition }, "*");
-      console.log("Message sent to parent:", {
-        type: "iframe-scroll",
-        scrollPosition,
-      });
+      // Detect when scrolling starts
+      if (!hasScrolled && scrollPosition > 0) {
+        setHasScrolled(true);
+        window.parent.postMessage({ type: "scroll-start" }, "*");
+        console.log("Scroll started");
+      }
+
+      // Detect when scrolling reaches the end (you can adjust the threshold here)
+      const scrollEndThreshold = 0.95;
+      if (!hasReachedEnd && scrollPosition >= scrollEndThreshold) {
+        setHasReachedEnd(true);
+        window.parent.postMessage({ type: "scroll-end" }, "*");
+        console.log("Scroll reached end");
+      }
 
       scrollRanges.forEach((range, i) => {
         const { start, end } = range;
@@ -42,15 +51,14 @@ const BottleScrollHTML = () => {
       });
     };
 
-    scroll.el?.addEventListener("scroll", updateOpacity);
+    scroll.el?.addEventListener("scroll", updateScrollState);
 
     return () => {
-      scroll.el?.removeEventListener("scroll", updateOpacity);
+      scroll.el?.removeEventListener("scroll", updateScrollState);
     };
-  }, [scroll, scrollRanges]);
+  }, [scroll, scrollRanges, hasScrolled, hasReachedEnd]);
 
   // Handle button click to toggle the h1 inside section-2
-  // Need to replace the h1 with the new div
   const handleSection2ButtonClick = () => {
     if (isSection2H1Visible) {
       gsap.to("#section-2 h1", {
@@ -74,7 +82,6 @@ const BottleScrollHTML = () => {
   };
 
   // Handle button click to toggle the h1 inside section-3
-  // Need to replace the h1 with the new div
   const handleSection3ButtonClick = () => {
     if (isSection3H1Visible) {
       gsap.to("#section-3 h1", {
@@ -98,7 +105,6 @@ const BottleScrollHTML = () => {
   };
 
   // Handle button click to toggle the h1 inside section-4
-  // Need to replace the h1 with the new div
   const handleSection4ButtonClick = () => {
     if (isSection4H1Visible) {
       gsap.to("#section-4 h1", {
