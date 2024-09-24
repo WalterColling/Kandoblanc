@@ -20,8 +20,18 @@ const BottleScrollHTML = () => {
   ];
 
   useEffect(() => {
+    const sections = document.querySelectorAll(
+      "#section-1, #section-2, #section-3, #section-4"
+    );
+
+    if (sections.length === 0) {
+      return;
+    }
+
+    let animationFrameId;
+
     const updateScrollState = () => {
-      const scrollPosition = scroll.offset; // Get the normalized scroll position
+      const scrollPosition = scroll.offset;
 
       // Detect when scrolling starts
       if (!hasScrolled && scrollPosition > 0) {
@@ -30,7 +40,14 @@ const BottleScrollHTML = () => {
         console.log("Scroll started");
       }
 
-      // Detect when scrolling reaches the end (you can adjust the threshold here)
+      // Reset `hasScrolled` when the user scrolls back to the top
+      if (hasScrolled && scrollPosition === 0) {
+        setHasScrolled(false);
+        window.parent.postMessage({ type: "scroll-start-reset" }, "*");
+        console.log("Scroll reset to top");
+      }
+
+      // Detect when scrolling reaches the end
       const scrollEndThreshold = 0.95;
       if (!hasReachedEnd && scrollPosition >= scrollEndThreshold) {
         setHasReachedEnd(true);
@@ -38,23 +55,33 @@ const BottleScrollHTML = () => {
         console.log("Scroll reached end");
       }
 
+      // Reset `hasReachedEnd` when the user scrolls away from the end
+      if (hasReachedEnd && scrollPosition < scrollEndThreshold) {
+        setHasReachedEnd(false);
+        window.parent.postMessage({ type: "scroll-end-reset" }, "*");
+        console.log("Scroll moved away from end");
+      }
+
+      // Update sections based on scroll ranges
       scrollRanges.forEach((range, i) => {
         const { start, end } = range;
 
         if (scrollPosition >= start && scrollPosition <= end) {
-          // Within range, set opacity to 1
           gsap.to(`#section-${i + 1}`, { opacity: 1, duration: 0.5 });
         } else {
-          // Outside range, set opacity to 0
           gsap.to(`#section-${i + 1}`, { opacity: 0, duration: 0.5 });
         }
       });
+
+      // Continue the animation frame loop
+      animationFrameId = requestAnimationFrame(updateScrollState);
     };
 
-    scroll.el?.addEventListener("scroll", updateScrollState);
+    // Start the animation frame loop
+    animationFrameId = requestAnimationFrame(updateScrollState);
 
     return () => {
-      scroll.el?.removeEventListener("scroll", updateScrollState);
+      cancelAnimationFrame(animationFrameId);
     };
   }, [scroll, scrollRanges, hasScrolled, hasReachedEnd]);
 
