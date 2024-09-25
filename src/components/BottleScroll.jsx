@@ -120,27 +120,9 @@ export function BottleScroll(props) {
       neckProxyRef.current.position.copy(neckRef.current.position);
     }
 
-    const atLastIndexNow = scroll.offset >= 0.99;
-    if (atLastIndexNow !== atLastIndex) {
-      setAtLastIndex(atLastIndexNow);
-      if (atLastIndexNow) {
-        setHovered((prev) => ({
-          bottle: true,
-          top: true,
-          neck: true,
-        }));
-      } else {
-        setHovered((prev) => ({
-          bottle: false,
-          top: false,
-          neck: false,
-        }));
-      }
-    }
-
-    updateBottleRotation(bottleRef, hovered.bottle || atLastIndexNow, delta);
-    updateTopRotation(topRef, hovered.top || atLastIndexNow, delta);
-    updateNeckRotation(neckRef, hovered.neck || atLastIndexNow, delta);
+    updateBottleRotation(bottleRef, hovered.bottle, delta);
+    updateTopRotation(topRef, hovered.top, delta);
+    updateNeckRotation(neckRef, hovered.neck, delta);
   });
 
   const debouncedSetHovered = useCallback(
